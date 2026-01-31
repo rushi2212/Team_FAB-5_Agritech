@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { recommendCrops } from '../../api';
 
 export default function CropSelection({ onSelect }) {
@@ -28,7 +29,7 @@ export default function CropSelection({ onSelect }) {
       ) : crops.length === 0 ? (
         <div className="rounded-2xl bg-farm-50 border border-farm-200 p-8 text-center">
           <p className="text-earth-600">
-            Recommendation endpoint is not available yet. Use <strong>Crop plan setup</strong> (step 1) to enter your crop, state, city, and season.
+            Recommendation endpoint is not available yet. Use <strong>Crop plan setup</strong> to enter your crop, state, city, and season.
           </p>
           <p className="mt-3 text-earth-500 text-sm">When /recommend-crops is added, suggested crops will appear here.</p>
         </div>

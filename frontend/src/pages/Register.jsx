@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,8 +16,7 @@ export default function Register() {
     setError('');
     setLoading(true);
     try {
-      const data = await register(name, email, password);
-      localStorage.setItem('token', data.token);
+      await register(name, email, password);
       navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Registration failed');

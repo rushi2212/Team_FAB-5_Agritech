@@ -1,22 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import FarmerDashboard from './pages/FarmerDashboard';
-import { getMe } from './api';
+import { useAuth } from './context/AuthContext';
 
 function ProtectedRoute({ children }) {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    getMe()
-      .then((d) => setUser(d.user))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
