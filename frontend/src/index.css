@@ -5,23 +5,74 @@
 @layer base {
   body {
     @apply bg-earth-100 text-earth-800 antialiased font-sans;
+    background-image: radial-gradient(circle at top right, rgba(149, 216, 141, 0.18), transparent 35%),
+      radial-gradient(circle at 20% 20%, rgba(255, 233, 168, 0.25), transparent 40%);
+    background-attachment: fixed;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 font-medium text-white bg-farm-600 hover:bg-farm-700 focus:ring-2 focus:ring-farm-500 focus:ring-offset-2 transition;
+    @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 font-medium text-white bg-farm-600 hover:bg-farm-700 focus:ring-2 focus:ring-farm-500 focus:ring-offset-2 transition shadow-md hover:shadow-lg hover:-translate-y-0.5;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 font-medium text-farm-700 bg-farm-100 hover:bg-farm-200 focus:ring-2 focus:ring-farm-500 focus:ring-offset-2 transition;
+    @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 font-medium text-farm-700 bg-farm-100 hover:bg-farm-200 focus:ring-2 focus:ring-farm-500 focus:ring-offset-2 transition hover:-translate-y-0.5;
   }
 
   .card {
-    @apply bg-white rounded-2xl shadow-card border border-earth-200/80 overflow-hidden;
+    @apply bg-white/95 rounded-2xl shadow-card border border-earth-200/80 overflow-hidden backdrop-blur-sm;
   }
 
   .input-field {
     @apply w-full rounded-xl border border-earth-200 bg-white px-4 py-3 text-earth-800 placeholder-earth-400 focus:border-farm-500 focus:ring-2 focus:ring-farm-500/20 outline-none transition;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.35s ease-out;
+  }
+
+  .animate-rise-in {
+    animation: riseIn 0.45s ease-out;
+  }
+
+  .animate-float-slow {
+    animation: floatSlow 7s ease-in-out infinite;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatSlow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
   }
 }

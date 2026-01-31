@@ -1,15 +1,15 @@
 {
   "location": {
-    "state": "Uttar Pradesh",
-    "city": "Varanasi",
+    "state": "Maharashtra",
+    "city": "Kolhapur",
     "coordinates": {
-      "lat": 25.31668,
-      "lon": 83.01041
+      "lat": 16.69563,
+      "lon": 74.23167
     }
   },
   "crop": {
-    "crop_name": "wheat",
-    "season": "Rabi"
+    "crop_name": "rice",
+    "season": "Kharif"
   },
   "day_of_cycle": 1,
   "soil_type": "Vertisols",
@@ -18,68 +18,68 @@
     "classification_endpoint": "classification/query",
     "properties_endpoint": "properties/query",
     "coordinates": {
-      "lat": 25.31668,
-      "lon": 83.01041
+      "lat": 16.69563,
+      "lon": 74.23167
     },
     "wrb_class_name": "Vertisols",
     "wrb_class_value": 29,
     "wrb_class_probability": [
       [
         "Vertisols",
-        23
+        27
+      ],
+      [
+        "Leptosols",
+        16
       ],
       [
         "Cambisols",
-        12
+        15
       ],
       [
         "Calcisols",
         9
       ],
       [
-        "Leptosols",
-        8
-      ],
-      [
-        "Luvisols",
-        8
+        "Acrisols",
+        6
       ]
     ],
-    "texture_class_usda": "Sandy clay loam",
+    "texture_class_usda": "Clay",
     "depths_available": [
       "0-5cm",
       "5-15cm",
       "15-30cm"
     ],
-    "properties_note": "Used nearby point (lat=25.3167, lon=83.0304); exact point had no data (urban mask)."
+    "properties_note": "Used nearby point (lat=16.6756, lon=74.2317); exact point had no data (urban mask)."
   },
   "soil_properties": {
     "0-5cm": {
-      "bdod": 1.4,
-      "cfvo": 15.4,
-      "clay": 30.2,
-      "phh2o": 7.2,
-      "sand": 27.9,
-      "silt": 42.0,
-      "soc": 37.9
+      "bdod": 1.38,
+      "cfvo": 18.8,
+      "clay": 29.9,
+      "phh2o": 6.6,
+      "sand": 41.6,
+      "silt": 28.4,
+      "soc": 24.1
     },
     "5-15cm": {
-      "bdod": 1.44,
-      "cfvo": 14.8,
-      "clay": 31.7,
-      "phh2o": 7.3,
-      "sand": 27.1,
-      "silt": 41.1,
-      "soc": 22.3
+      "bdod": 1.39,
+      "cfvo": 16.2,
+      "clay": 31.8,
+      "phh2o": 6.6,
+      "sand": 41.0,
+      "silt": 27.3,
+      "soc": 17.0
     },
     "15-30cm": {
-      "bdod": 1.48,
-      "cfvo": 15.3,
-      "clay": 33.9,
-      "phh2o": 7.3,
-      "sand": 25.8,
-      "silt": 40.3,
-      "soc": 16.7
+      "bdod": 1.4,
+      "cfvo": 19.4,
+      "clay": 35.0,
+      "phh2o": 6.6,
+      "sand": 38.4,
+      "silt": 26.6,
+      "soc": 10.0
     }
   },
   "soil_properties_units": {

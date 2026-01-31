@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import SectionLoader from './SectionLoader';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -35,6 +36,7 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
   const [markAsDoneLoading, setMarkAsDoneLoading] = useState(false);
   const [checkThresholdLoading, setCheckThresholdLoading] = useState(false);
   const [panelError, setPanelError] = useState('');
+  const [markedDays, setMarkedDays] = useState(() => new Set());
   const [cycleStartDate, setCycleStartDate] = useState(() => {
     const d = new Date();
     d.setDate(1);
@@ -79,6 +81,11 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
     setViewDate(new Date());
   };
 
+  const closeModal = () => {
+    setSelectedDay(null);
+    setPanelError('');
+  };
+
   const handleMarkAsDone = async () => {
     if (!selectedInfo?.cycleDay || !onMarkAsDone) return;
     setPanelError('');
@@ -86,6 +93,11 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
     try {
       await onMarkAsDone(selectedInfo.cycleDay);
       await onRefresh();
+      setMarkedDays((prev) => {
+        const next = new Set(prev);
+        next.add(selectedInfo.cycleDay);
+        return next;
+      });
     } catch (e) {
       setPanelError(e.message || 'Mark as done failed');
     } finally {
@@ -109,16 +121,14 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
 
   if (loading) {
     return (
-      <div className="card p-12 flex justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-2 border-farm-500 border-t-transparent" />
-      </div>
+      <SectionLoader title="Loading full calendar" subtitle="Preparing your cycle overview…" />
     );
   }
 
   if (!calendar || days.length === 0) {
     return (
       <div className="card p-8 text-center rounded-2xl bg-amber-50 border border-amber-200">
-        <p className="text-amber-800">No calendar yet. Set up your crop plan (step 1) and generate the calendar (step 2).</p>
+        <p className="text-amber-800">No calendar yet. Set up your crop plan and generate the calendar.</p>
         <button onClick={onRefresh} className="btn-secondary mt-4 rounded-xl">Refresh</button>
       </div>
     );
@@ -129,7 +139,7 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
 
   return (
     <div className="space-y-6">
-      <div className="card p-6 sm:p-8">
+      <div className="card p-6 sm:p-8 animate-fade-in">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
             <span className="text-3xl">📋</span>
@@ -141,6 +151,21 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
             </div>
           </div>
           <button onClick={onRefresh} className="btn-secondary rounded-xl px-4 py-2 text-sm">Refresh</button>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-4 mb-6 text-sm">
+          <div className="rounded-2xl bg-earth-50 p-4">
+            <p className="text-earth-500">Cycle duration</p>
+            <p className="font-semibold text-earth-800">{cycleDuration} days</p>
+          </div>
+          <div className="rounded-2xl bg-earth-50 p-4">
+            <p className="text-earth-500">Forecast window</p>
+            <p className="font-semibold text-earth-800">{calendar.forecast_days ?? '—'} days</p>
+          </div>
+          <div className="rounded-2xl bg-earth-50 p-4">
+            <p className="text-earth-500">Location</p>
+            <p className="font-semibold text-earth-800">{calendar.location?.city}, {calendar.location?.state}</p>
+          </div>
         </div>
 
         {/* Cycle start date: map cycle day 1 to this date */}
@@ -185,7 +210,7 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
         </button>
 
         {/* Calendar grid */}
-        <div className="border border-earth-200 rounded-2xl overflow-hidden">
+        <div className="border border-earth-200 rounded-2xl overflow-hidden shadow-sm">
           <div className="grid grid-cols-7 bg-earth-100 border-b border-earth-200">
             {WEEKDAYS.map((wd) => (
               <div
@@ -206,17 +231,16 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
                   key={cell.key}
                   type="button"
                   onClick={() => cell.date && setSelectedDay(cell.date)}
-                  className={`min-h-[80px] sm:min-h-[100px] p-2 border-b border-r border-earth-100 text-left transition ${!cell.isCurrentMonth ? 'bg-earth-50/50 text-earth-400' : 'bg-white hover:bg-farm-50/50'
-                    } ${isSelected ? 'ring-2 ring-farm-500 ring-inset bg-farm-50' : ''} ${isToday ? 'border-l-2 border-l-farm-500' : ''}`}
+                  className={`min-h-[80px] sm:min-h-[110px] p-2 border-b border-r border-earth-100 text-left transition duration-200 ${!cell.isCurrentMonth ? 'bg-earth-50/50 text-earth-400' : 'bg-white hover:bg-farm-50/60'} ${isSelected ? 'ring-2 ring-farm-500 ring-inset bg-farm-50' : ''} ${isToday ? 'border-l-2 border-l-farm-500 bg-farm-50/30' : ''}`}
                 >
                   {cell.dayOfGrid != null && (
                     <>
-                      <span className={`text-sm font-medium ${!cell.isCurrentMonth ? 'text-earth-400' : isToday ? 'text-farm-600' : 'text-earth-800'}`}>
+                      <span className={`text-sm font-semibold ${!cell.isCurrentMonth ? 'text-earth-400' : isToday ? 'text-farm-600' : 'text-earth-800'}`}>
                         {cell.dayOfGrid}
                       </span>
                       {dayData?.data && (
-                        <div className="mt-1 space-y-0.5 overflow-hidden">
-                          <span className="block text-[10px] sm:text-xs font-medium text-farm-700 truncate" title={dayData.data.stage_name}>
+                        <div className="mt-1 space-y-1 overflow-hidden">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-farm-100 text-farm-700 px-2 py-0.5 text-[10px] sm:text-xs font-semibold truncate" title={dayData.data.stage_name}>
                             {dayData.data.stage_name}
                           </span>
                           <span className="block text-[10px] text-earth-500">
@@ -231,79 +255,120 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
             })}
           </div>
         </div>
+      </div>
 
-        {/* Selected day detail panel */}
-        {selectedDay && (
-          <div className="mt-6 rounded-2xl border-2 border-farm-200 bg-farm-50/80 p-6">
-            <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-              <h3 className="font-display font-semibold text-earth-800">
-                {selectedDay.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
-                {selectedInfo && ` · Cycle Day ${selectedInfo.cycleDay}`}
-              </h3>
-              <div className="flex items-center gap-2 flex-wrap">
-                {selectedInfo?.cycleDay != null && onMarkAsDone && (
-                  <button
-                    type="button"
-                    onClick={handleMarkAsDone}
-                    disabled={markAsDoneLoading}
-                    className="btn-primary rounded-xl px-4 py-2 text-sm disabled:opacity-50"
-                  >
-                    {markAsDoneLoading ? 'Updating…' : 'Mark as done'}
-                  </button>
-                )}
-                {onCheckThreshold && (
-                  <button
-                    type="button"
-                    onClick={handleCheckThreshold}
-                    disabled={checkThresholdLoading}
-                    className="btn-secondary rounded-xl px-4 py-2 text-sm disabled:opacity-50"
-                  >
-                    {checkThresholdLoading ? 'Checking…' : 'Check threshold'}
-                  </button>
-                )}
+      {selectedDay && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4"
+          onClick={(e) => e.currentTarget === e.target && closeModal()}
+        >
+          <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border border-earth-200 animate-rise-in">
+            <div className="px-6 pt-6 pb-4 border-b border-earth-100">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-earth-800">
+                    {selectedDay.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
+                    {selectedInfo && ` · Cycle Day ${selectedInfo.cycleDay}`}
+                  </h3>
+                  <p className="text-earth-500 text-sm">Tap outside to close</p>
+                </div>
                 <button
                   type="button"
-                  onClick={() => setSelectedDay(null)}
-                  className="text-earth-500 hover:text-earth-700 text-sm"
+                  onClick={closeModal}
+                  className="text-earth-400 hover:text-earth-700 text-xl"
+                  aria-label="Close"
                 >
-                  Close
+                  ×
                 </button>
               </div>
             </div>
-            {panelError && (
-              <div className="mb-3 rounded-xl bg-red-50 text-red-700 px-3 py-2 text-sm">{panelError}</div>
-            )}
-            {selectedData ? (
-              <>
-                <p className="font-medium text-farm-700 mb-2">{selectedData.stage_name}</p>
-                {selectedData.weather && (
-                  <div className="flex flex-wrap gap-3 text-sm text-earth-600 mb-3">
-                    {selectedData.weather.temperature_c != null && (
-                      <span>{selectedData.weather.temperature_c}°C</span>
-                    )}
-                    {selectedData.weather.humidity_percent != null && (
-                      <span>{selectedData.weather.humidity_percent}% humidity</span>
-                    )}
-                    {selectedData.weather.rainfall_mm != null && (
-                      <span>{selectedData.weather.rainfall_mm} mm rain</span>
-                    )}
+
+            <div className="px-6 py-5">
+              {panelError && (
+                <div className="mb-3 rounded-xl bg-red-50 text-red-700 px-3 py-2 text-sm">{panelError}</div>
+              )}
+
+              {selectedData ? (
+                <>
+                  <div className="flex flex-wrap items-center gap-3 mb-4">
+                    <span className="rounded-full bg-farm-100 text-farm-700 px-3 py-1 text-sm font-semibold">
+                      {selectedData.stage_name}
+                    </span>
+                    <span className="rounded-full bg-earth-100 text-earth-700 px-3 py-1 text-sm">
+                      {(selectedData.tasks || []).length} tasks
+                    </span>
                   </div>
-                )}
-                <ul className="list-disc list-inside space-y-1 text-earth-700 text-sm">
-                  {(selectedData.tasks || []).map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
-                {selectedData.weather_note && (
-                  <p className="mt-2 text-earth-500 text-sm italic">{selectedData.weather_note}</p>
-                )}
-              </>
-            ) : (
-              <p className="text-earth-500 text-sm">No crop plan data for this date. Adjust cycle start date or check if this day is within your cycle.</p>
-            )}
+
+                  {selectedData.weather && (
+                    <div className="grid sm:grid-cols-3 gap-3 text-sm mb-4">
+                      <div className="rounded-xl bg-earth-50 p-3">
+                        <p className="text-earth-500">Temperature</p>
+                        <p className="font-semibold text-earth-800">{selectedData.weather.temperature_c ?? '—'}°C</p>
+                      </div>
+                      <div className="rounded-xl bg-earth-50 p-3">
+                        <p className="text-earth-500">Humidity</p>
+                        <p className="font-semibold text-earth-800">{selectedData.weather.humidity_percent ?? '—'}%</p>
+                      </div>
+                      <div className="rounded-xl bg-earth-50 p-3">
+                        <p className="text-earth-500">Rainfall</p>
+                        <p className="font-semibold text-earth-800">{selectedData.weather.rainfall_mm ?? '—'} mm</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="rounded-2xl border border-earth-200 p-4">
+                    <h4 className="font-semibold text-earth-800 mb-2">Tasks</h4>
+                    <ul className="space-y-2 text-sm text-earth-700">
+                      {(selectedData.tasks || []).map((t, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="mt-1 h-2 w-2 rounded-full bg-farm-500" />
+                          <span>{t}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {selectedData.weather_note && (
+                    <p className="mt-3 text-earth-500 text-sm italic">{selectedData.weather_note}</p>
+                  )}
+                </>
+              ) : (
+                <p className="text-earth-500 text-sm">No crop plan data for this date. Adjust cycle start date or check if this day is within your cycle.</p>
+              )}
+            </div>
+
+            <div className="px-6 pb-6 flex flex-wrap gap-2">
+              {selectedInfo?.cycleDay != null && onMarkAsDone && (
+                <button
+                  type="button"
+                  onClick={handleMarkAsDone}
+                  disabled={markAsDoneLoading}
+                  className="btn-primary rounded-xl px-4 py-2 text-sm disabled:opacity-50"
+                >
+                  {markAsDoneLoading ? 'Updating…' : 'Mark as done'}
+                </button>
+              )}
+              {onCheckThreshold && (
+                <button
+                  type="button"
+                  onClick={handleCheckThreshold}
+                  disabled={checkThresholdLoading || !selectedInfo?.cycleDay || !markedDays.has(selectedInfo.cycleDay)}
+                  className="btn-secondary rounded-xl px-4 py-2 text-sm disabled:opacity-50"
+                >
+                  {checkThresholdLoading ? 'Checking…' : 'Check threshold'}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={closeModal}
+                className="text-earth-500 hover:text-earth-700 text-sm"
+              >
+                Close
+              </button>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

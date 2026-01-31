@@ -6,6 +6,7 @@ Step 2: Read variable, persistent, calendar; generate/remake calendar when neede
 import json
 import logging
 import os
+import sys
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
@@ -15,7 +16,8 @@ from pydantic import BaseModel, Field
 import time
 
 # Debug: set DEBUG=0 to disable; default on so uvicorn terminal shows all debugging
-DEBUG = os.environ.get("DEBUG", "1") != "0" and (os.environ.get("CROP_DEBUG", "1") != "0")
+DEBUG = os.environ.get("DEBUG", "1") != "0" and (
+    os.environ.get("CROP_DEBUG", "1") != "0")
 logging.basicConfig(
     level=logging.DEBUG if DEBUG else logging.INFO,
     format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
@@ -31,6 +33,13 @@ DATA_DIR = ROOT / "data"
 VARIABLE_PATH = DATA_DIR / "variable.json"
 PERSISTENT_PATH = DATA_DIR / "persistent.json"
 CALENDAR_PATH = DATA_DIR / "calendar.json"
+
+CROP_PREDICTION_DIR = ROOT / "crop-prediction"
+CROP_PREDICTION_SERVICES_DIR = CROP_PREDICTION_DIR / "crop-prediction-services"
+for _path in (CROP_PREDICTION_DIR, CROP_PREDICTION_SERVICES_DIR):
+    _path_str = str(_path)
+    if _path_str not in sys.path:
+        sys.path.append(_path_str)
 
 app = FastAPI(
     title="Crop Calendar API",
@@ -60,7 +69,8 @@ async def debug_request_logging(request: Request, call_next):
         log.debug("    query=%s", dict(request.query_params))
     response = await call_next(request)
     elapsed_ms = (time.perf_counter() - start) * 1000
-    log.debug("<<< %s %s -> %s (%.1f ms)", method, path, response.status_code, elapsed_ms)
+    log.debug("<<< %s %s -> %s (%.1f ms)", method,
+              path, response.status_code, elapsed_ms)
     return response
 
 
@@ -70,15 +80,25 @@ async def debug_request_logging(request: Request, call_next):
 
 class GenerateVariableRequest(BaseModel):
     """Step 1: inputs for generating variable.json."""
-    state: str = Field(..., min_length=1, description="State (e.g. Maharashtra)")
+    state: str = Field(..., min_length=1,
+                       description="State (e.g. Maharashtra)")
     city: str = Field(..., min_length=1, description="City (e.g. Pune)")
-    crop_name: str = Field(..., min_length=1, description="Crop name (e.g. rice)")
+    crop_name: str = Field(..., min_length=1,
+                           description="Crop name (e.g. rice)")
     season: str = Field(..., description="Kharif, Rabi, or Summer")
 
 
 class UpdateDayOfCycleRequest(BaseModel):
     """Update only day_of_cycle in variable.json."""
-    day_of_cycle: int = Field(..., ge=1, description="Current day in the crop cycle (1-based)")
+    day_of_cycle: int = Field(..., ge=1,
+                              description="Current day in the crop cycle (1-based)")
+
+
+class CropRecommendationRequest(BaseModel):
+    """Crop prediction input for city and soil type."""
+    city: str = Field(..., min_length=1, description="City (e.g. Pune)")
+    soil_type: str = Field(..., min_length=1,
+                           description="Soil type (e.g. loamy)")
 
 
 # ---------------------------------------------------------------------------
@@ -118,7 +138,8 @@ def _read_json(path: Path, name: str):
     log.debug("_read_json %s", path)
     if not path.exists():
         log.debug("_read_json 404 %s", name)
-        raise HTTPException(status_code=404, detail=f"{name} not found. Run step 1 first.")
+        raise HTTPException(
+            status_code=404, detail=f"{name} not found. Run step 1 first.")
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -142,15 +163,18 @@ def update_day_of_cycle(body: UpdateDayOfCycleRequest):
     log.debug("PATCH /variable day_of_cycle=%s", body.day_of_cycle)
     if not VARIABLE_PATH.exists():
         log.debug("PATCH /variable 404 variable.json missing")
-        raise HTTPException(status_code=404, detail="variable.json not found. Run generate-variable first.")
+        raise HTTPException(
+            status_code=404, detail="variable.json not found. Run generate-variable first.")
     try:
         with open(VARIABLE_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         log.debug("PATCH /variable read error: %s", e)
-        raise HTTPException(status_code=500, detail=f"Invalid variable.json: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Invalid variable.json: {e}") from e
     if not isinstance(data, dict):
-        raise HTTPException(status_code=500, detail="variable.json must be a JSON object.")
+        raise HTTPException(
+            status_code=500, detail="variable.json must be a JSON object.")
     data["day_of_cycle"] = body.day_of_cycle
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     with open(VARIABLE_PATH, "w", encoding="utf-8") as f:
@@ -171,8 +195,52 @@ def get_calendar():
     log.debug("GET /calendar")
     if not CALENDAR_PATH.exists() or CALENDAR_PATH.stat().st_size == 0:
         log.debug("GET /calendar 404")
-        raise HTTPException(status_code=404, detail="Calendar not found. Run generate-calendar first.")
+        raise HTTPException(
+            status_code=404, detail="Calendar not found. Run generate-calendar first.")
     return _read_json(CALENDAR_PATH, "calendar.json")
+
+
+# ---------------------------------------------------------------------------
+# Crop prediction
+# ---------------------------------------------------------------------------
+
+@app.post("/recommend-crops", response_class=JSONResponse)
+def recommend_crops(body: CropRecommendationRequest):
+    """Recommend crops based on city, soil type, weather, rainfall, and news."""
+    log.debug("POST /recommend-crops body=%s", body.model_dump())
+    try:
+        from weather import get_weather
+        from rainfall_scraper import scrape_rainfall
+        from news_scraper import scrape_crop_news
+        from ai_recommender import recommend_with_ai
+    except Exception as e:
+        log.debug("Crop prediction import error: %s", e, exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Crop prediction services not available.",
+        )
+
+    weather = get_weather(body.city)
+    rainfall = scrape_rainfall(body.city)
+    news = scrape_crop_news(body.city)
+
+    ai_result = recommend_with_ai(
+        city=body.city,
+        soil_type=body.soil_type,
+        weather=weather,
+        rainfall=rainfall,
+        news=news,
+    )
+
+    return {
+        "city": body.city,
+        "soil_type": body.soil_type,
+        "weather": weather,
+        "rainfall": rainfall,
+        "crop_news": news,
+        "recommended_crops": ai_result.get("crops", []),
+        "recommendation_rationale": ai_result.get("rationale", ""),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -195,7 +263,8 @@ def generate_calendar_endpoint():
         try:
             run_calendar_agent()
             msg = sys.stdout.getvalue().strip()
-            log.debug("calendar_agent stdout: %s", msg[:200] if msg else "(none)")
+            log.debug("calendar_agent stdout: %s",
+                      msg[:200] if msg else "(none)")
         finally:
             sys.stdout = old_stdout
         if CALENDAR_PATH.exists():
