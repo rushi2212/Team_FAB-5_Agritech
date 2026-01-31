@@ -1,0 +1,167 @@
+{
+  "cropCatalog": [
+    {
+      "id": "rice",
+      "name": "Rice",
+      "name_local": "तांदूळ",
+      "suitableRegions": [
+        "Kolhapur",
+        "Pune",
+        "Nashik",
+        "Konkan"
+      ],
+      "season": "kharif",
+      "typicalDurationDays": 120
+    },
+    {
+      "id": "wheat",
+      "name": "Wheat",
+      "name_local": "गहू",
+      "suitableRegions": [
+        "Kolhapur",
+        "Pune",
+        "Nashik"
+      ],
+      "season": "rabi",
+      "typicalDurationDays": 140
+    }
+  ],
+  "stageModels": {
+    "rice": [
+      {
+        "stage": "Sowing",
+        "dayStart": 1,
+        "dayEnd": 7,
+        "actions": [
+          "Seed soaking",
+          "Field puddling",
+          "Transplanting"
+        ],
+        "dependencies": [],
+        "weatherConstraints": [
+          "no heavy rain during transplanting"
+        ],
+        "durationDays": 7
+      },
+      {
+        "stage": "Tillering",
+        "dayStart": 8,
+        "dayEnd": 35,
+        "actions": [
+          "First nitrogen application",
+          "Weeding",
+          "Water management"
+        ],
+        "dependencies": [
+          "no rainfall 24h for nitrogen"
+        ],
+        "weatherConstraints": [
+          "no heavy rain during fertilizer"
+        ],
+        "durationDays": 28
+      },
+      {
+        "stage": "Protection",
+        "dayStart": 36,
+        "dayEnd": 60,
+        "actions": [
+          "Fungicide spray",
+          "Pest monitoring",
+          "Second nitrogen if needed"
+        ],
+        "dependencies": [
+          "dry weather for spray"
+        ],
+        "weatherConstraints": [
+          "dry weather for fungicide"
+        ],
+        "durationDays": 25
+      },
+      {
+        "stage": "Flowering",
+        "dayStart": 61,
+        "dayEnd": 90,
+        "actions": [
+          "Water stress avoidance",
+          "Disease scouting"
+        ],
+        "dependencies": [],
+        "weatherConstraints": [],
+        "durationDays": 30
+      },
+      {
+        "stage": "Harvest",
+        "dayStart": 91,
+        "dayEnd": 120,
+        "actions": [
+          "Harvest when 80% grains mature",
+          "Threshing",
+          "Drying"
+        ],
+        "dependencies": [
+          "dry day for harvest"
+        ],
+        "weatherConstraints": [
+          "dry day"
+        ],
+        "durationDays": 30
+      }
+    ]
+  },
+  "soilRules": {
+    "defaults": {
+      "clay": {
+        "ph_range": [
+          5.5,
+          7.0
+        ],
+        "nitrogen_advice": "split application"
+      },
+      "loam": {
+        "ph_range": [
+          6.0,
+          7.5
+        ],
+        "nitrogen_advice": "standard"
+      },
+      "sandy": {
+        "ph_range": [
+          5.5,
+          6.5
+        ],
+        "nitrogen_advice": "frequent small doses"
+      }
+    },
+    "regionalDefaults": {
+      "Kolhapur": {
+        "soilType": "clay",
+        "ph": 6.5
+      }
+    }
+  },
+  "regulatory": {
+    "pesticides": [
+      "approved_list_from_regulatory_db"
+    ],
+    "fertilizers": [
+      "approved_list_from_regulatory_db"
+    ]
+  },
+  "replanningRules": {
+    "sprayDelayToleranceDays": 3,
+    "rainBlockedActions": [
+      "Fungicide spray",
+      "First nitrogen application",
+      "Second nitrogen if needed"
+    ],
+    "alternativeActions": {
+      "Fungicide spray": {
+        "rescheduleIf": "rain",
+        "maxDelayDays": 3
+      }
+    },
+    "weatherWindows": {
+      "minDryHoursForSpray": 24
+    }
+  }
+}
