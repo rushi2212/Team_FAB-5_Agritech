@@ -9,6 +9,9 @@ export default function CropSelection({ onSelect }) {
   const [soilType, setSoilType] = useState("");
   const [error, setError] = useState("");
   const [rationale, setRationale] = useState("");
+  const [weather, setWeather] = useState(null);
+  const [rainfall, setRainfall] = useState("");
+  const [news, setNews] = useState([]);
 
   useEffect(() => {}, []);
 
@@ -17,6 +20,9 @@ export default function CropSelection({ onSelect }) {
     setError("");
     setRationale("");
     setSelected(null);
+    setWeather(null);
+    setRainfall("");
+    setNews([]);
     setLoading(true);
     try {
       const data = await recommendCrops({
@@ -25,6 +31,9 @@ export default function CropSelection({ onSelect }) {
       });
       setCrops(data.crops || []);
       setRationale(data.rationale || "");
+      setWeather(data.weather || null);
+      setRainfall(data.rainfall || "");
+      setNews(data.crop_news || []);
     } catch (err) {
       setCrops([]);
       setError(err?.message || "Failed to fetch recommendations");
@@ -83,6 +92,47 @@ export default function CropSelection({ onSelect }) {
       {rationale && (
         <div className="mb-4 rounded-xl border border-farm-200 bg-farm-50 p-3 text-earth-700 text-sm">
           {rationale}
+        </div>
+      )}
+      {(weather || rainfall || (news && news.length > 0)) && (
+        <div className="mb-6 rounded-2xl border border-earth-200 bg-white p-4">
+          <h3 className="font-medium text-earth-800 mb-3">
+            Live inputs used for recommendation
+          </h3>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl bg-farm-50 p-3">
+              <div className="text-xs text-earth-500">Weather</div>
+              <div className="text-sm text-earth-800 mt-1">
+                {weather ? (
+                  <>
+                    {weather.temperature ?? "—"}°C, {weather.humidity ?? "—"}% •{" "}
+                    {weather.condition || "unknown"}
+                  </>
+                ) : (
+                  "—"
+                )}
+              </div>
+            </div>
+            <div className="rounded-xl bg-farm-50 p-3">
+              <div className="text-xs text-earth-500">Rainfall</div>
+              <div className="text-sm text-earth-800 mt-1">
+                {rainfall || "—"}
+              </div>
+            </div>
+            <div className="rounded-xl bg-farm-50 p-3">
+              <div className="text-xs text-earth-500">News headlines</div>
+              <div className="text-sm text-earth-800 mt-1">
+                {news && news.length > 0 ? `${news.length} headlines` : "—"}
+              </div>
+            </div>
+          </div>
+          {news && news.length > 0 && (
+            <ul className="mt-4 list-disc list-inside text-sm text-earth-700 space-y-1">
+              {news.map((n, i) => (
+                <li key={i}>{n}</li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
       {loading ? (
