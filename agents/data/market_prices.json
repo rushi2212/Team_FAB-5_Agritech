@@ -1,0 +1,100 @@
+{
+  "rice_maharashtra_kharif": {
+    "predicted_price_range": {
+      "min": 1305,
+      "max": 2140
+    },
+    "average_price": 1698,
+    "trend": "volatile",
+    "confidence": "low",
+    "data_sources": [
+      "agmarknet",
+      "historical_pattern_analysis"
+    ],
+    "last_updated": "2026-02-01"
+  },
+  "wheat_punjab_rabi": {
+    "predicted_price_range": {
+      "min": 1471,
+      "max": 2336
+    },
+    "average_price": 1879,
+    "trend": "stable",
+    "confidence": "medium",
+    "data_sources": [
+      "agmarknet",
+      "historical_pattern_analysis"
+    ],
+    "last_updated": "2026-02-01"
+  },
+  "cotton_gujarat_kharif": {
+    "predicted_price_range": {
+      "min": 3997,
+      "max": 5083
+    },
+    "average_price": 4531,
+    "trend": "volatile",
+    "confidence": "low",
+    "data_sources": [
+      "agmarknet",
+      "historical_pattern_analysis"
+    ],
+    "last_updated": "2026-02-01"
+  },
+  "tomato_karnataka_summer": {
+    "predicted_price_range": {
+      "min": 935,
+      "max": 1222
+    },
+    "average_price": 1075,
+    "trend": "falling",
+    "confidence": "medium",
+    "data_sources": [
+      "agmarknet",
+      "historical_pattern_analysis"
+    ],
+    "last_updated": "2026-02-01"
+  },
+  "soybean_madhya_pradesh_kharif": {
+    "predicted_price_range": {
+      "min": 959,
+      "max": 1172
+    },
+    "average_price": 1066,
+    "trend": "stable",
+    "confidence": "low",
+    "data_sources": [
+      "agmarknet",
+      "historical_pattern_analysis"
+    ],
+    "last_updated": "2026-02-01"
+  },
+  "onion_maharashtra_rabi": {
+    "predicted_price_range": {
+      "min": 1339,
+      "max": 1763
+    },
+    "average_price": 1545,
+    "trend": "falling",
+    "confidence": "medium",
+    "data_sources": [
+      "agmarknet",
+      "historical_pattern_analysis"
+    ],
+    "last_updated": "2026-02-01"
+  },
+  "potato_uttar_pradesh_rabi": {
+    "predicted_price_range": {
+      "min": 1035,
+      "max": 1387
+    },
+    "average_price": 1206,
+    "trend": "falling",
+    "confidence": "medium",
+    "data_sources": [
+      "agmarknet",
+      "historical_pattern_analysis"
+    ],
+    "last_updated": "2026-02-01"
+  }
+}

@@ -11,7 +11,7 @@
     "crop_name": "rice",
     "season": "Kharif"
   },
-  "day_of_cycle": 10,
+  "day_of_cycle": 17,
   "soil_type": "Vertisols",
   "soil_map": {
     "source": "ISRIC SoilGrids v2",
@@ -92,8 +92,8 @@
     "cfvo": "vol%"
   },
   "climate": {
-    "temperature_c": 20.4,
-    "humidity_percent": 64,
+    "temperature_c": 19.1,
+    "humidity_percent": 68,
     "rainfall_mm": 0.0
   },
   "climate_units": {

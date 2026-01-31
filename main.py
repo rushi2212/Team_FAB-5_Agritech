@@ -81,6 +81,19 @@ class UpdateDayOfCycleRequest(BaseModel):
     day_of_cycle: int = Field(..., ge=1, description="Current day in the crop cycle (1-based)")
 
 
+class PredictMarketPriceRequest(BaseModel):
+    """Request model for market price prediction."""
+    crop_name: str = Field(..., min_length=1, description="Crop name (e.g. rice, wheat)")
+    state: str = Field(..., min_length=1, description="State (e.g. Maharashtra)")
+    season: str = Field(..., description="Kharif, Rabi, or Summer")
+    harvest_month: str = Field(..., description="Expected harvest month (e.g. October, March)")
+
+
+class AssessPestRiskRequest(BaseModel):
+    """Request model for pest/disease risk assessment."""
+    user_email: str = Field("", description="Email for alerts (optional, only sent if risk >= medium)")
+
+
 # ---------------------------------------------------------------------------
 # Step 1: Generate variable
 # ---------------------------------------------------------------------------
@@ -216,6 +229,65 @@ def generate_calendar_endpoint():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ---------------------------------------------------------------------------
+# Market Price Prediction
+# ---------------------------------------------------------------------------
+
+@app.post("/predict-market-price", response_class=JSONResponse)
+def predict_market_price_endpoint(body: PredictMarketPriceRequest):
+    """
+    Predict harvest-time market prices for a crop based on historical mandi data,
+    seasonality, and current trends. Uses agents/market_price_agent.py.
+    """
+    log.debug("POST /predict-market-price body=%s", body.model_dump())
+    try:
+        from agents.market_price_agent import run as run_price_agent
+        
+        result = run_price_agent(
+            crop=body.crop_name,
+            state=body.state,
+            season=body.season,
+            harvest_month=body.harvest_month,
+        )
+        log.debug("POST /predict-market-price ok -> prediction=%s", result.get("average_price"))
+        return result
+    except ValueError as e:
+        log.debug("POST /predict-market-price ValueError: %s", e)
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        log.debug("POST /predict-market-price Exception: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
+# Pest & Disease Risk Assessment
+# ---------------------------------------------------------------------------
+
+@app.post("/assess-pest-risk", response_class=JSONResponse)
+def assess_pest_risk_endpoint(body: AssessPestRiskRequest):
+    """
+    Assess pest and disease risks for current crop based on weather conditions
+    and crop stage. Sends email alert if risk is medium or higher.
+    Uses agents/pest_disease_agent.py.
+    """
+    log.debug("POST /assess-pest-risk body=%s", body.model_dump())
+    try:
+        from agents.pest_disease_agent import run as run_pest_agent
+        
+        result = run_pest_agent(user_email=body.user_email)
+        log.debug("POST /assess-pest-risk ok -> risk_level=%s", result.get("risk_level"))
+        return result
+    except FileNotFoundError as e:
+        log.debug("POST /assess-pest-risk FileNotFoundError: %s", e)
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        log.debug("POST /assess-pest-risk ValueError: %s", e)
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        log.debug("POST /assess-pest-risk Exception: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/")
 def root():
     """Health and steps overview."""
@@ -225,4 +297,146 @@ def root():
         "step_1": "POST /generate-variable  (body: state, city, crop_name, season)",
         "step_2": "POST /generate-calendar   (uses variable + persistent)",
         "read": "GET /variable, GET /persistent, GET /calendar",
+        "predict": "POST /predict-market-price (body: crop_name, state, season, harvest_month)",
+        "assess": "POST /assess-pest-risk (body: user_email - optional)",
+        "chat": "POST /chat (body: message, session_id - optional)",
     }
+
+
+# ---------------------------------------------------------------------------
+# Chatbot / Farmer Interaction Agent
+# ---------------------------------------------------------------------------
+
+# Global chatbot instances (keyed by session_id)
+chatbot_instances = {}
+
+def get_chatbot_instance(session_id: str = "default"):
+    """Get or create a chatbot instance for a session."""
+    if session_id not in chatbot_instances:
+        from agents.chatbot_agent import create_chatbot
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY not found in environment")
+        chatbot_instances[session_id] = create_chatbot(api_key, str(DATA_DIR))
+    return chatbot_instances[session_id]
+
+
+@app.post("/chat", response_model=None)
+def chat_endpoint(body: dict):
+    """
+    Chat with the farmer interaction agent. The agent can:
+    - Answer questions about crop cultivation
+    - Provide calendar tasks and schedules
+    - Predict market prices
+    - Assess pest/disease risks
+    - Explain weather impacts
+    - Give soil-based recommendations
+    
+    All responses cite government sources (TNAU, ICAR, Agmarknet, etc.)
+    """
+    from services.schemas import ChatRequest, ChatResponse
+    
+    log.debug("POST /chat body=%s", body)
+    try:
+        # Validate request
+        request = ChatRequest(**body)
+        
+        # Get chatbot instance
+        chatbot = get_chatbot_instance(request.session_id)
+        
+        # Process message
+        result = chatbot.chat(request.message)
+        
+        # Get quick suggestions
+        suggestions = chatbot.get_quick_suggestions()
+        
+        # Build response
+        response = ChatResponse(
+            response=result['response'],
+            sources=result.get('sources', []),
+            tools_used=result.get('tools_used', []),
+            context=result.get('context', {}),
+            suggestions=suggestions
+        )
+        
+        log.debug("POST /chat ok -> response length=%d, sources=%d", 
+                  len(response.response), len(response.sources))
+        return response.model_dump()
+        
+    except ValueError as e:
+        log.debug("POST /chat ValueError: %s", e)
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        log.error("POST /chat Exception: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/chat/history")
+def get_chat_history(session_id: str = "default"):
+    """
+    Get chat conversation history for a session.
+    """
+    log.debug("GET /chat/history session_id=%s", session_id)
+    try:
+        from services.schemas import ChatHistoryResponse, ChatMessage
+        
+        if session_id not in chatbot_instances:
+            return ChatHistoryResponse(history=[], session_id=session_id).model_dump()
+        
+        chatbot = chatbot_instances[session_id]
+        history = chatbot.get_history()
+        
+        # Convert to ChatMessage objects
+        messages = [
+            ChatMessage(
+                role=msg['role'],
+                content=msg['content'],
+                timestamp=msg.get('timestamp', ''),
+                sources=msg.get('sources', [])
+            ) for msg in history
+        ]
+        
+        response = ChatHistoryResponse(history=messages, session_id=session_id)
+        log.debug("GET /chat/history ok -> %d messages", len(messages))
+        return response.model_dump()
+        
+    except Exception as e:
+        log.error("GET /chat/history Exception: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/chat/history")
+def clear_chat_history(session_id: str = "default"):
+    """
+    Clear chat conversation history for a session.
+    """
+    log.debug("DELETE /chat/history session_id=%s", session_id)
+    try:
+        if session_id in chatbot_instances:
+            chatbot = chatbot_instances[session_id]
+            chatbot.clear_history()
+            log.debug("DELETE /chat/history ok -> cleared")
+            return {"status": "success", "message": "Chat history cleared"}
+        else:
+            return {"status": "success", "message": "No history to clear"}
+            
+    except Exception as e:
+        log.error("DELETE /chat/history Exception: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/chat/suggestions")
+def get_chat_suggestions(session_id: str = "default"):
+    """
+    Get context-aware quick action suggestions for the chatbot.
+    """
+    log.debug("GET /chat/suggestions session_id=%s", session_id)
+    try:
+        chatbot = get_chatbot_instance(session_id)
+        suggestions = chatbot.get_quick_suggestions()
+        log.debug("GET /chat/suggestions ok -> %d suggestions", len(suggestions))
+        return {"suggestions": suggestions}
+        
+    except Exception as e:
+        log.error("GET /chat/suggestions Exception: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))

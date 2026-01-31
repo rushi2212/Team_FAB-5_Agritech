@@ -8,6 +8,10 @@ export default function CalendarGeneration({ calendar, variable, onGenerate, onR
     return (calendar?.days || []).slice(0, 5);
   }, [calendar]);
 
+  const forecastSnapshot = useMemo(() => {
+    return (calendar?.forecast_snapshot || []).slice(0, 16);
+  }, [calendar]);
+
   const handleGenerate = async () => {
     setGenerating(true);
     try {
@@ -94,6 +98,25 @@ export default function CalendarGeneration({ calendar, variable, onGenerate, onR
             </div>
           )}
 
+          {forecastSnapshot.length > 0 && (
+            <div className="rounded-2xl border border-earth-200 p-4">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <h4 className="font-semibold text-earth-800">Forecast snapshot (next {forecastSnapshot.length} days)</h4>
+                <span className="text-xs text-earth-500">Based on forecast window</span>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                {forecastSnapshot.map((f, i) => (
+                  <div key={i} className="rounded-xl bg-earth-50 p-3">
+                    <p className="font-semibold text-earth-800">Day {i + 1}</p>
+                    <p className="text-earth-600">Temp: {f.temperature_c ?? '—'}°C</p>
+                    <p className="text-earth-600">Humidity: {f.humidity_percent ?? '—'}%</p>
+                    <p className="text-earth-600">Rain: {f.rainfall_mm ?? '—'} mm</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {previewDays.length > 0 && (
             <div className="rounded-2xl border border-earth-200 p-4">
               <h4 className="font-semibold text-earth-800 mb-3">First 5 days preview</h4>
@@ -108,6 +131,13 @@ export default function CalendarGeneration({ calendar, variable, onGenerate, onR
               </div>
             </div>
           )}
+
+          <details className="rounded-2xl border border-earth-200 p-4 text-sm">
+            <summary className="cursor-pointer font-semibold text-earth-800">Raw calendar response</summary>
+            <pre className="mt-3 whitespace-pre-wrap text-xs text-earth-600 bg-earth-50 rounded-xl p-3 overflow-auto">
+              {JSON.stringify(calendar, null, 2)}
+            </pre>
+          </details>
         </div>
       )}
     </div>

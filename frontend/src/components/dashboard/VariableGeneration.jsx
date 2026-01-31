@@ -28,6 +28,8 @@ export default function VariableGeneration({ variable, loading, onGenerate, onRe
     }));
   }, [variable]);
 
+  const climateUnit = variable?.climate_units || {};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -131,8 +133,12 @@ export default function VariableGeneration({ variable, loading, onGenerate, onRe
             </div>
             <div className="rounded-2xl bg-earth-50 p-4">
               <span className="text-earth-500">Climate</span>
-              <p className="font-semibold text-earth-800">{variable.climate?.temperature_c}°C</p>
-              <p className="text-earth-600">Humidity {variable.climate?.humidity_percent}% · Rain {variable.climate?.rainfall_mm} mm</p>
+              <p className="font-semibold text-earth-800">
+                {variable.climate?.temperature_c ?? '—'} {climateUnit.temperature_c || '°C'}
+              </p>
+              <p className="text-earth-600">
+                Humidity {variable.climate?.humidity_percent ?? '—'} {climateUnit.humidity_percent || '%'} · Rain {variable.climate?.rainfall_mm ?? '—'} {climateUnit.rainfall_mm || 'mm'}
+              </p>
             </div>
             <div className="rounded-2xl bg-farm-50 p-4">
               <span className="text-earth-500">Soil type</span>
@@ -148,8 +154,14 @@ export default function VariableGeneration({ variable, loading, onGenerate, onRe
               <div className="rounded-2xl border border-earth-200 p-4">
                 <h4 className="font-semibold text-earth-800 mb-2">Soil classification</h4>
                 <div className="text-sm text-earth-600 space-y-1">
+                  {variable.soil_map.source && (
+                    <p>Source: <span className="font-medium text-earth-800">{variable.soil_map.source}</span></p>
+                  )}
                   {variable.soil_map.wrb_class_name && (
                     <p>WRB class: <span className="font-medium text-earth-800">{variable.soil_map.wrb_class_name}</span></p>
+                  )}
+                  {variable.soil_map.wrb_class_value != null && (
+                    <p>WRB value: <span className="font-medium text-earth-800">{variable.soil_map.wrb_class_value}</span></p>
                   )}
                   {Array.isArray(variable.soil_map.wrb_class_probability) && (
                     <div className="mt-2 space-y-1">
@@ -204,6 +216,13 @@ export default function VariableGeneration({ variable, loading, onGenerate, onRe
               </div>
             </div>
           )}
+
+          <details className="rounded-2xl border border-earth-200 p-4 text-sm">
+            <summary className="cursor-pointer font-semibold text-earth-800">Raw crop plan response</summary>
+            <pre className="mt-3 whitespace-pre-wrap text-xs text-earth-600 bg-earth-50 rounded-xl p-3 overflow-auto">
+              {JSON.stringify(variable, null, 2)}
+            </pre>
+          </details>
         </div>
       )}
     </div>

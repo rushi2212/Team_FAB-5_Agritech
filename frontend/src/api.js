@@ -122,3 +122,76 @@ export async function recommendCrops() {
   if (!res.ok) throw new Error(data.detail || data.message || 'Recommend failed');
   return data;
 }
+
+// --- Chatbot (Python FastAPI backend) ---
+export async function sendChatMessage(message, sessionId = 'default') {
+  const url = `${CROP_API}/chat`;
+  if (DEBUG) console.log('[api] POST', url, { message, session_id: sessionId });
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({ message, session_id: sessionId }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || data.message || 'Chat failed');
+  return data;
+}
+
+export async function getChatHistory(sessionId = 'default') {
+  const url = `${CROP_API}/chat/history?session_id=${sessionId}`;
+  if (DEBUG) console.log('[api] GET', url);
+  const res = await fetch(url, { headers: headers() });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || data.message || 'Get chat history failed');
+  return data;
+}
+
+export async function clearChatHistory(sessionId = 'default') {
+  const url = `${CROP_API}/chat/history?session_id=${sessionId}`;
+  if (DEBUG) console.log('[api] DELETE', url);
+  const res = await fetch(url, {
+    method: 'DELETE',
+    headers: headers(),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || data.message || 'Clear chat history failed');
+  return data;
+}
+
+export async function getChatSuggestions(sessionId = 'default') {
+  const url = `${CROP_API}/chat/suggestions?session_id=${sessionId}`;
+  if (DEBUG) console.log('[api] GET', url);
+  const res = await fetch(url, { headers: headers() });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || data.message || 'Get suggestions failed');
+  return data;
+}
+
+// --- Market Price Prediction ---
+export async function predictMarketPrice(body) {
+  const url = `${CROP_API}/predict-market-price`;
+  if (DEBUG) console.log('[api] POST', url, body);
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || data.message || 'Market price prediction failed');
+  return data;
+}
+
+// --- Pest/Disease Risk Assessment ---
+export async function assessPestRisk(body) {
+  const url = `${CROP_API}/assess-pest-risk`;
+  if (DEBUG) console.log('[api] POST', url, body);
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || data.message || 'Pest risk assessment failed');
+  return data;
+}
+

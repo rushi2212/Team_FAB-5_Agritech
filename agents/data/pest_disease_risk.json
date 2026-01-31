@@ -1,0 +1,22 @@
+{
+  "crop_name": "rice",
+  "crop_stage": "Nursery",
+  "day_of_cycle": 17,
+  "risk_level": "low",
+  "risk_score": 0,
+  "pest_risks": [],
+  "disease_risks": [],
+  "preventive_actions": [
+    "Monitor crop regularly for early signs of pests/diseases",
+    "Maintain field sanitation and remove crop residues",
+    "Ensure proper drainage to prevent waterlogging",
+    "Use pheromone traps for pest monitoring"
+  ],
+  "weather_factors": {
+    "temperature_c": 19.1,
+    "humidity_percent": 68,
+    "rainfall_mm": 0.0
+  },
+  "email_sent": false,
+  "last_updated": "2026-02-01"
+}
