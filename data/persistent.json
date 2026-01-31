@@ -159,5 +159,209 @@
       }
     },
     "last_updated": "2026-02-01"
+  },
+  "jowar_maharashtra": {
+    "crop_name": "jowar",
+    "state": "maharashtra",
+    "source_domains_used": [
+      "gazetteers.maharashtra.gov.in",
+      "nutricereals.dac.gov.in",
+      "pmfby.gov.in",
+      "agritech.tnau.ac.in",
+      "krishikosh.egranth.ac.in",
+      "imdpune.gov.in",
+      "ppqs.gov.in"
+    ],
+    "seasons": {
+      "Kharif": {
+        "name": "",
+        "sowing_months": [
+          "June",
+          "July"
+        ],
+        "harvesting_months": [
+          "October",
+          "November",
+          "December"
+        ],
+        "cycle_duration_days": 120,
+        "stages": [
+          {
+            "name": "Seedling stage",
+            "start_pct": 0.0,
+            "end_pct": 12.5,
+            "description": "Initial growth phase where seedlings emerge.",
+            "typical_months": [
+              "June",
+              "July"
+            ]
+          },
+          {
+            "name": "Vegetative stage",
+            "start_pct": 12.5,
+            "end_pct": 41.67,
+            "description": "Rapid growth phase with leaf development.",
+            "typical_months": [
+              "July",
+              "August"
+            ]
+          },
+          {
+            "name": "Flowering/Reproductive Stage",
+            "start_pct": 41.67,
+            "end_pct": 66.67,
+            "description": "Flowering occurs, leading to grain formation.",
+            "typical_months": [
+              "August",
+              "September"
+            ]
+          },
+          {
+            "name": "Maturity",
+            "start_pct": 66.67,
+            "end_pct": 87.5,
+            "description": "Grains mature and dry down.",
+            "typical_months": [
+              "September"
+            ]
+          }
+        ],
+        "pesticides": [],
+        "fertilizers": []
+      }
+    },
+    "last_updated": "2026-02-01"
+  },
+  "maize_maharashtra": {
+    "crop_name": "maize",
+    "state": "maharashtra",
+    "source_domains_used": [
+      "pmfby.gov.in",
+      "gazetteers.maharashtra.gov.in",
+      "angrau.ac.in",
+      "agritech.tnau.ac.in",
+      "epubs.icar.org.in",
+      "imdpune.gov.in",
+      "niphm.gov.in"
+    ],
+    "seasons": {
+      "Kharif": {
+        "name": "",
+        "sowing_months": [
+          "June",
+          "July"
+        ],
+        "harvesting_months": [
+          "September",
+          "October"
+        ],
+        "cycle_duration_days": 120,
+        "stages": [
+          {
+            "name": "Germination & establishment",
+            "start_pct": 0.0,
+            "end_pct": 12.0,
+            "description": "Initial growth phase where seeds germinate and establish roots.",
+            "typical_months": [
+              "June"
+            ]
+          },
+          {
+            "name": "Vegetative phase",
+            "start_pct": 12.0,
+            "end_pct": 39.0,
+            "description": "Growth of leaves and stems.",
+            "typical_months": [
+              "June",
+              "July"
+            ]
+          },
+          {
+            "name": "Flowering phase",
+            "start_pct": 39.0,
+            "end_pct": 54.0,
+            "description": "Development of flowers.",
+            "typical_months": [
+              "July"
+            ]
+          },
+          {
+            "name": "Cob formation",
+            "start_pct": 54.0,
+            "end_pct": 70.0,
+            "description": "Formation of maize cobs.",
+            "typical_months": [
+              "July",
+              "August"
+            ]
+          },
+          {
+            "name": "Maturity phase",
+            "start_pct": 70.0,
+            "end_pct": 92.0,
+            "description": "Cobs mature and dry out.",
+            "typical_months": [
+              "August",
+              "September"
+            ]
+          },
+          {
+            "name": "Harvesting",
+            "start_pct": 92.0,
+            "end_pct": 100.0,
+            "description": "Cobs are harvested.",
+            "typical_months": [
+              "September",
+              "October"
+            ]
+          }
+        ],
+        "pesticides": [
+          {
+            "name": "Atrazine",
+            "stage": "Weed control",
+            "start_pct": 12.0,
+            "duration_pct": 10.0,
+            "dosage": "1 kg/ha",
+            "target_pests": ""
+          },
+          {
+            "name": "Carbaryl",
+            "stage": "Insect control",
+            "start_pct": 39.0,
+            "duration_pct": 20.0,
+            "dosage": "2 kg/ha",
+            "target_pests": ""
+          }
+        ],
+        "fertilizers": [
+          {
+            "name": "Urea",
+            "stage": "Basal application",
+            "start_pct": 0.0,
+            "duration_pct": 10.0,
+            "schedule": "",
+            "dosage": "100 kg/ha"
+          },
+          {
+            "name": "Super Phosphate",
+            "stage": "Basal application",
+            "start_pct": 0.0,
+            "duration_pct": 10.0,
+            "schedule": "",
+            "dosage": "50 kg/ha"
+          },
+          {
+            "name": "Muriate of Potash",
+            "stage": "Top dressing",
+            "start_pct": 70.0,
+            "duration_pct": 10.0,
+            "schedule": "",
+            "dosage": "50 kg/ha"
+          }
+        ]
+      }
+    },
+    "last_updated": "2026-02-01"
   }
 }
