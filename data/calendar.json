@@ -1,0 +1,1658 @@
+{
+  "weather_baseline": {
+    "temperature_c": 19.8,
+    "humidity_percent": 69,
+    "rainfall_mm": 0.0
+  },
+  "cycle_duration_days": 120,
+  "start_day": 1,
+  "forecast_days": 16,
+  "location": {
+    "state": "Maharashtra",
+    "city": "Kolhapur",
+    "coordinates": {
+      "lat": 16.69563,
+      "lon": 74.23167
+    }
+  },
+  "crop": {
+    "crop_name": "rice",
+    "season": "Kharif"
+  },
+  "season": "Kharif",
+  "days": [
+    {
+      "day_index": 1,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Prepare nursery bed",
+        "Sow rice seeds",
+        "Apply DAP fertilizer: 2 kg/cent"
+      ],
+      "weather": {
+        "temperature_c": 22.7,
+        "humidity_percent": 56,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 2,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Water nursery bed as necessary"
+      ],
+      "weather": {
+        "temperature_c": 23.5,
+        "humidity_percent": 54,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 3,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Monitor seedling growth"
+      ],
+      "weather": {
+        "temperature_c": 24.4,
+        "humidity_percent": 55,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 4,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Water nursery bed as necessary"
+      ],
+      "weather": {
+        "temperature_c": 24.5,
+        "humidity_percent": 52,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 5,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Monitor seedling growth"
+      ],
+      "weather": {
+        "temperature_c": 23.8,
+        "humidity_percent": 52,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 6,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Water nursery bed as necessary"
+      ],
+      "weather": {
+        "temperature_c": 24.6,
+        "humidity_percent": 49,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 7,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Monitor for pests and diseases"
+      ],
+      "weather": {
+        "temperature_c": 24.8,
+        "humidity_percent": 47,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 8,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Water nursery bed as necessary"
+      ],
+      "weather": {
+        "temperature_c": 27.6,
+        "humidity_percent": 38,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 9,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Monitor seedling growth"
+      ],
+      "weather": {
+        "temperature_c": 27.1,
+        "humidity_percent": 32,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 10,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Water nursery bed as necessary"
+      ],
+      "weather": {
+        "temperature_c": 27.3,
+        "humidity_percent": 22,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 11,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Monitor for pests and diseases"
+      ],
+      "weather": {
+        "temperature_c": 27.5,
+        "humidity_percent": 27,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 12,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Apply additional nutrients if needed"
+      ],
+      "weather": {
+        "temperature_c": 27.7,
+        "humidity_percent": 35,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 13,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Water nursery bed as necessary"
+      ],
+      "weather": {
+        "temperature_c": 27.5,
+        "humidity_percent": 35,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 14,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Monitor seedling growth"
+      ],
+      "weather": {
+        "temperature_c": 27.8,
+        "humidity_percent": 34,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 15,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Water nursery bed as necessary"
+      ],
+      "weather": {
+        "temperature_c": 28.6,
+        "humidity_percent": 34,
+        "rainfall_mm": 0.0
+      }
+    },
+    {
+      "day_index": 16,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Prepare for transplanting"
+      ],
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 17,
+      "stage_name": "Nursery",
+      "tasks": [
+        "Uproot healthy seedlings",
+        "Transport seedlings to main field"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 18,
+      "stage_name": "Main field preparation",
+      "tasks": [
+        "Plow and level main field",
+        "Apply NPK fertilizer: 90:60:60 kg/ha"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 19,
+      "stage_name": "Main field preparation",
+      "tasks": [
+        "Ensure proper irrigation setup"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 20,
+      "stage_name": "Main field preparation",
+      "tasks": [
+        "Finalize leveling of the field"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 21,
+      "stage_name": "Transplanting",
+      "tasks": [
+        "Transplant seedlings ensuring proper spacing"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 22,
+      "stage_name": "Transplanting",
+      "tasks": [
+        "Continue transplanting remaining seedlings"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 23,
+      "stage_name": "Transplanting",
+      "tasks": [
+        "Maintain water level in the field"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 24,
+      "stage_name": "Transplanting",
+      "tasks": [
+        "Check for stressed plants"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 25,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Monitor field for weed growth",
+        "Apply Anilophos pesticide: 2% G"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 26,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Manage water level",
+        "Check for signs of nutrient deficiency"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 27,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Remove weeds manually if necessary"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 28,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Continue monitoring pest activity"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 29,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Apply additional nitrogen if needed"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 30,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Monitor for diseases like blast and blight"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 31,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Ensure optimal water levels"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 32,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Inspect tillers for any irregularities"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 33,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Perform weed check"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 34,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Apply Anilophos pesticide: 2% G if needed"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 35,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Monitor growth progress"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 36,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Inspect for stem borer activity"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 37,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Check water management system"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 38,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Assessment of plant health"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 39,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Prepare for upcoming stages"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 40,
+      "stage_name": "Vegetative/Tillering",
+      "tasks": [
+        "Final tiller count check"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 41,
+      "stage_name": "Panicle initiation",
+      "tasks": [
+        "Monitor initial panicle formation"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 42,
+      "stage_name": "Panicle initiation",
+      "tasks": [
+        "Ensure no nutrient shortages"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 43,
+      "stage_name": "Panicle initiation",
+      "tasks": [
+        "Monitor water levels carefully"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 44,
+      "stage_name": "Panicle initiation",
+      "tasks": [
+        "Continue inspection of plants"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 45,
+      "stage_name": "Panicle initiation",
+      "tasks": [
+        "Watch for pest emergence"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 46,
+      "stage_name": "Panicle initiation",
+      "tasks": [
+        "Final adjustments for nutrient supply"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 47,
+      "stage_name": "Panicle initiation",
+      "tasks": [
+        "Continue monitoring modes of growth"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 48,
+      "stage_name": "Booting",
+      "tasks": [
+        "Inspect panicle growth out of the boot"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 49,
+      "stage_name": "Booting",
+      "tasks": [
+        "Observe signs of head emergence"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 50,
+      "stage_name": "Booting",
+      "tasks": [
+        "Maintain adequate soil moisture"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 51,
+      "stage_name": "Booting",
+      "tasks": [
+        "Monitor for pests like neck sheath rot"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 52,
+      "stage_name": "Booting",
+      "tasks": [
+        "Manage field water carefully"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 53,
+      "stage_name": "Booting",
+      "tasks": [
+        "Final check before flowering phase"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 54,
+      "stage_name": "Flowering",
+      "tasks": [
+        "Begin inspecting the flowering process",
+        "Apply Acephate pesticide: 75% SP to manage pests"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 55,
+      "stage_name": "Flowering",
+      "tasks": [
+        "Monitor pollen release activities"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 56,
+      "stage_name": "Flowering",
+      "tasks": [
+        "Ensure no disruptions in water supply"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 57,
+      "stage_name": "Flowering",
+      "tasks": [
+        "Observe plant health closely"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 58,
+      "stage_name": "Flowering",
+      "tasks": [
+        "Make quick checks on flowering completion"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 59,
+      "stage_name": "Grain filling",
+      "tasks": [
+        "Assess the grain setting process"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 60,
+      "stage_name": "Grain filling",
+      "tasks": [
+        "Monitor proper grain filling"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 61,
+      "stage_name": "Grain filling",
+      "tasks": [
+        "Review overall crop health"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 62,
+      "stage_name": "Grain filling",
+      "tasks": [
+        "Ensure adequate moisture for filling"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 63,
+      "stage_name": "Grain filling",
+      "tasks": [
+        "Manage nutrient source efficiently"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 64,
+      "stage_name": "Maturity",
+      "tasks": [
+        "Watch for signs of grain maturity"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 65,
+      "stage_name": "Maturity",
+      "tasks": [
+        "Prepare equipment for harvesting"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 66,
+      "stage_name": "Maturity",
+      "tasks": [
+        "Continue monitoring the color change"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 67,
+      "stage_name": "Maturity",
+      "tasks": [
+        "Prepare storage for harvested grains"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 68,
+      "stage_name": "Maturity",
+      "tasks": [
+        "Check final maturity indicators"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 69,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Begin harvesting mature rice grains"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 70,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Continue harvesting activities"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 71,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Sort and clean harvested rice"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 72,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Ensure proper drying of grains"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 73,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Store grains in pest-free facility"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 74,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Completion of post-harvest processes"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 75,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Inspection of storage conditions"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 76,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Document the yield and prepare reports"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 77,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Conduct maintenance of harvesting equipment"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 78,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Review storage inventories"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 79,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Plan next crop cycle based on results"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 80,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Finalize the crop cycle recordkeeping"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 81,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Evaluate efficiency and improvements"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 82,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Inspect stored grains periodically for pest intrusion"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 83,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Confirm market readiness of grains"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 84,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Update crop output to stakeholders"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 85,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Reassess field conditions post-harvest"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 86,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Record lessons learned for future planning"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 87,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Coordinate market delivery logistics"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 88,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Organize community sharing of results"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 89,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Plan soil amendment based on the yield analysis"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 90,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Analyze data and prepare insights for advisor consultation"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 91,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Schedule meetings for early planning of the next cycle"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 92,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Issue communications to ensure field hands are acknowledged"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 93,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Confirm market deliveries are secured"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 94,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Ongoing check on pest control efficacy"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 95,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Reassess storage potential for future needs"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 96,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Allocate budget for repairs to storage if required"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 97,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Analyze feedback from stakeholders and integrate"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 98,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Complete final adjustments on logistical planning"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 99,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Ensure all harvesting equipment is safely stored"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 100,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Evaluate GPS data for field mapping updates"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 101,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Review harvest summaries and archive"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 102,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Assess seed selection for next growth cycle"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 103,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Commence soil health improvement plan"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 104,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Coordinate the cleaning of fields"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 105,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Update all inventory listings post-harvest"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 106,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Communicate with suppliers for next season preparations"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 107,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Ensure compliance with agricultural policies"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 108,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Reassess all safety protocols post-harvest"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 109,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Organize team meeting for harvest debrief"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 110,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Identify training needs for efficiency improvements"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 111,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Regularly check inventory of storage patterns"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 112,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Follow-up on market conditions for price analysis"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 113,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Finalize and review financial documentation"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 114,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Look into future investments and crop insurance"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 115,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Send updates to cooperative extensions"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 116,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Apply learnings from evaluations for planning"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 117,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Initiate soil tests for next planting cycle"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 118,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Assess effective water management post-harvest"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 119,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Re-evaluate field conditions and amend as necessary"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    },
+    {
+      "day_index": 120,
+      "stage_name": "Harvesting",
+      "tasks": [
+        "Finalize all reporting and archive"
+      ],
+      "weather_note": "Short aggregate outlook",
+      "weather": {
+        "temperature_c": null,
+        "humidity_percent": null,
+        "rainfall_mm": null
+      }
+    }
+  ],
+  "forecast_snapshot": [
+    {
+      "temperature_c": 22.7,
+      "humidity_percent": 56,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 23.5,
+      "humidity_percent": 54,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 24.4,
+      "humidity_percent": 55,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 24.5,
+      "humidity_percent": 52,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 23.8,
+      "humidity_percent": 52,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 24.6,
+      "humidity_percent": 49,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 24.8,
+      "humidity_percent": 47,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 27.6,
+      "humidity_percent": 38,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 27.1,
+      "humidity_percent": 32,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 27.3,
+      "humidity_percent": 22,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 27.5,
+      "humidity_percent": 27,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 27.7,
+      "humidity_percent": 35,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 27.5,
+      "humidity_percent": 35,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 27.8,
+      "humidity_percent": 34,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": 28.6,
+      "humidity_percent": 34,
+      "rainfall_mm": 0.0
+    },
+    {
+      "temperature_c": null,
+      "humidity_percent": null,
+      "rainfall_mm": null
+    }
+  ]
+}

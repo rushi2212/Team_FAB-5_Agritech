@@ -1,0 +1,163 @@
+{
+  "rice_maharashtra": {
+    "crop_name": "rice",
+    "state": "Maharashtra",
+    "source_domains_used": [
+      "gazetteers.maharashtra.gov.in",
+      "ncert.nic.in",
+      "nfsm.gov.in",
+      "agritech.tnau.ac.in",
+      "pmfby.gov.in",
+      "imdpune.gov.in",
+      "agriwelfare.gov.in"
+    ],
+    "seasons": {
+      "Kharif": {
+        "name": "",
+        "sowing_months": [
+          "June",
+          "July"
+        ],
+        "harvesting_months": [
+          "September",
+          "October",
+          "November"
+        ],
+        "cycle_duration_days": 120,
+        "stages": [
+          {
+            "name": "Nursery",
+            "start_pct": 0.0,
+            "end_pct": 25.0,
+            "description": "Seedlings are grown in a nursery for about 20-25 days.",
+            "typical_months": [
+              "June"
+            ]
+          },
+          {
+            "name": "Main field preparation",
+            "start_pct": 25.0,
+            "end_pct": 30.0,
+            "description": "Preparation of the main field for transplanting.",
+            "typical_months": [
+              "July"
+            ]
+          },
+          {
+            "name": "Transplanting",
+            "start_pct": 30.0,
+            "end_pct": 40.0,
+            "description": "Transplanting of seedlings into the main field.",
+            "typical_months": [
+              "July"
+            ]
+          },
+          {
+            "name": "Vegetative/Tillering",
+            "start_pct": 40.0,
+            "end_pct": 60.0,
+            "description": "The plant grows and develops tillers.",
+            "typical_months": [
+              "July",
+              "August"
+            ]
+          },
+          {
+            "name": "Panicle initiation",
+            "start_pct": 60.0,
+            "end_pct": 70.0,
+            "description": "Initiation of panicle formation.",
+            "typical_months": [
+              "August"
+            ]
+          },
+          {
+            "name": "Booting",
+            "start_pct": 70.0,
+            "end_pct": 80.0,
+            "description": "The booting stage where the panicle is pushed out.",
+            "typical_months": [
+              "August"
+            ]
+          },
+          {
+            "name": "Flowering",
+            "start_pct": 80.0,
+            "end_pct": 85.0,
+            "description": "Flowering of the rice plant.",
+            "typical_months": [
+              "August",
+              "September"
+            ]
+          },
+          {
+            "name": "Grain filling",
+            "start_pct": 85.0,
+            "end_pct": 90.0,
+            "description": "Filling of grains in the panicle.",
+            "typical_months": [
+              "September"
+            ]
+          },
+          {
+            "name": "Maturity",
+            "start_pct": 90.0,
+            "end_pct": 95.0,
+            "description": "The grains mature and turn golden.",
+            "typical_months": [
+              "September",
+              "October"
+            ]
+          },
+          {
+            "name": "Harvesting",
+            "start_pct": 95.0,
+            "end_pct": 100.0,
+            "description": "Harvesting of mature rice grains.",
+            "typical_months": [
+              "October",
+              "November"
+            ]
+          }
+        ],
+        "pesticides": [
+          {
+            "name": "Anilophos",
+            "stage": "Vegetative/Tillering",
+            "start_pct": 40.0,
+            "duration_pct": 20.0,
+            "dosage": "2% G",
+            "target_pests": "Stem borer"
+          },
+          {
+            "name": "Acephate",
+            "stage": "Flowering",
+            "start_pct": 80.0,
+            "duration_pct": 5.0,
+            "dosage": "75% SP",
+            "target_pests": "Thrips"
+          }
+        ],
+        "fertilizers": [
+          {
+            "name": "NPK",
+            "stage": "Main field preparation",
+            "start_pct": 25.0,
+            "duration_pct": 10.0,
+            "schedule": "Basal application",
+            "dosage": "90:60:60 kg/ha"
+          },
+          {
+            "name": "DAP",
+            "stage": "Nursery",
+            "start_pct": 0.0,
+            "duration_pct": 25.0,
+            "schedule": "Basal application",
+            "dosage": "2 kg/cent of nursery area"
+          }
+        ]
+      }
+    },
+    "last_updated": "2026-02-01"
+  }
+}

@@ -5,8 +5,6 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    proxy: {
-      '/api': { target: 'http://127.0.0.1:3001', changeOrigin: true },
-    },
+    // No API proxy: auth → Node (VITE_AUTH_API), crop/calendar → Python (VITE_CROP_API) directly
   },
 });

@@ -66,6 +66,16 @@ export default function FarmerDashboard() {
   const handleMarkAsDone = async (cycleDay) => {
     setError('');
     try {
+      // 1) Refresh variable.json (weather, soil, etc.) via generate-variable
+      if (variable?.location?.state && variable?.location?.city && variable?.crop?.crop_name && variable?.crop?.season) {
+        await generateVariable({
+          state: variable.location.state,
+          city: variable.location.city,
+          crop_name: variable.crop.crop_name,
+          season: variable.crop.season,
+        });
+      }
+      // 2) Set day_of_cycle to the calendar day the user clicked (e.g. 11)
       await updateDayOfCycle(cycleDay);
       loadVariable();
       loadCalendar();

@@ -1,4 +1,8 @@
-const API = '/api';
+// Auth: Node backend only. Crop/calendar: Python (FastAPI) backend directly.
+const AUTH_API = import.meta.env.VITE_AUTH_API || 'http://127.0.0.1:3001';
+const CROP_API = import.meta.env.VITE_CROP_API || 'http://127.0.0.1:8000';
+
+const DEBUG = import.meta.env.VITE_DEBUG === '1';
 
 function getToken() {
   return localStorage.getItem('token');
@@ -10,9 +14,11 @@ function headers(includeAuth = false) {
   return h;
 }
 
-// Auth
+// --- Auth (Node backend) ---
 export async function register(name, email, password) {
-  const res = await fetch(`${API}/auth/register`, {
+  const url = `${AUTH_API}/api/auth/register`;
+  if (DEBUG) console.log('[api] POST', url);
+  const res = await fetch(url, {
     method: 'POST',
     headers: headers(),
     body: JSON.stringify({ name, email, password }),
@@ -23,7 +29,9 @@ export async function register(name, email, password) {
 }
 
 export async function login(email, password) {
-  const res = await fetch(`${API}/auth/login`, {
+  const url = `${AUTH_API}/api/auth/login`;
+  if (DEBUG) console.log('[api] POST', url);
+  const res = await fetch(url, {
     method: 'POST',
     headers: headers(),
     body: JSON.stringify({ email, password }),
@@ -34,15 +42,19 @@ export async function login(email, password) {
 }
 
 export async function getMe() {
-  const res = await fetch(`${API}/auth/me`, { headers: headers(true) });
+  const url = `${AUTH_API}/api/auth/me`;
+  if (DEBUG) console.log('[api] GET', url);
+  const res = await fetch(url, { headers: headers(true) });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'Unauthorized');
   return data;
 }
 
-// Crop API (proxied to FastAPI)
+// --- Crop / calendar (Python FastAPI backend directly) ---
 export async function generateVariable(body) {
-  const res = await fetch(`${API}/crop/generate-variable`, {
+  const url = `${CROP_API}/generate-variable`;
+  if (DEBUG) console.log('[api] POST', url, body);
+  const res = await fetch(url, {
     method: 'POST',
     headers: headers(),
     body: JSON.stringify(body),
@@ -53,14 +65,18 @@ export async function generateVariable(body) {
 }
 
 export async function getVariable() {
-  const res = await fetch(`${API}/crop/variable`, { headers: headers() });
+  const url = `${CROP_API}/variable`;
+  if (DEBUG) console.log('[api] GET', url);
+  const res = await fetch(url, { headers: headers() });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.detail || data.message || 'Variable not found');
   return data;
 }
 
 export async function updateDayOfCycle(day_of_cycle) {
-  const res = await fetch(`${API}/crop/variable`, {
+  const url = `${CROP_API}/variable`;
+  if (DEBUG) console.log('[api] PATCH', url, { day_of_cycle });
+  const res = await fetch(url, {
     method: 'PATCH',
     headers: headers(),
     body: JSON.stringify({ day_of_cycle }),
@@ -71,29 +87,36 @@ export async function updateDayOfCycle(day_of_cycle) {
 }
 
 export async function getPersistent() {
-  const res = await fetch(`${API}/crop/persistent`, { headers: headers() });
+  const url = `${CROP_API}/persistent`;
+  if (DEBUG) console.log('[api] GET', url);
+  const res = await fetch(url, { headers: headers() });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.detail || data.message || 'Persistent not found');
   return data;
 }
 
 export async function getCalendar() {
-  const res = await fetch(`${API}/crop/calendar`, { headers: headers() });
+  const url = `${CROP_API}/calendar`;
+  if (DEBUG) console.log('[api] GET', url);
+  const res = await fetch(url, { headers: headers() });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.detail || data.message || 'Calendar not found');
   return data;
 }
 
 export async function generateCalendar() {
-  const res = await fetch(`${API}/crop/generate-calendar`, { method: 'POST', headers: headers() });
+  const url = `${CROP_API}/generate-calendar`;
+  if (DEBUG) console.log('[api] POST', url);
+  const res = await fetch(url, { method: 'POST', headers: headers() });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.detail || data.message || 'Generate calendar failed');
   return data;
 }
 
-// Placeholder for future endpoint
 export async function recommendCrops() {
-  const res = await fetch(`${API}/crop/recommend-crops`, { headers: headers() });
+  const url = `${CROP_API}/recommend-crops`;
+  if (DEBUG) console.log('[api] GET', url);
+  const res = await fetch(url, { headers: headers() });
   if (res.status === 404) return { crops: [] };
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.detail || data.message || 'Recommend failed');

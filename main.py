@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import time
@@ -35,6 +36,15 @@ app = FastAPI(
     title="Crop Calendar API",
     description="Step 1: Generate variable (location, crop, soil, climate). Step 2: Get/generate calendar.",
     version="1.0.0",
+)
+
+# Allow frontend (Vite dev server) to call Python backend directly
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

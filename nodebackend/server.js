@@ -1,10 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import { createProxyMiddleware } from 'http-proxy-middleware';
 import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import { authMiddleware } from './routes/auth.js';
-import { PORT, MONGODB_URI, FASTAPI_URL } from './config.js';
+import { PORT, MONGODB_URI } from './config.js';
 
 const DEBUG = process.env.DEBUG === '1' || process.env.CROP_DEBUG === '1';
 const log = (...args) => DEBUG && console.log('[crop-node]', ...args);
@@ -34,22 +33,7 @@ app.get('/api/protected', authMiddleware, (req, res) => {
   res.json({ message: 'Protected', userId: req.userId });
 });
 
-// Proxy to FastAPI for crop calendar (so frontend talks to one origin)
-app.use(
-  '/api/crop',
-  createProxyMiddleware({
-    target: FASTAPI_URL,
-    changeOrigin: true,
-    pathRewrite: { '^/api/crop': '' },
-    onProxyReq: (proxyReq, req) => {
-      log('proxy', req.method, req.url, '->', FASTAPI_URL + req.url.replace(/^\/api\/crop/, ''));
-    },
-    onError: (err, req, res) => {
-      log('proxy error', err.message);
-      res.status(502).json({ error: 'Crop API unavailable', detail: err.message });
-    },
-  })
-);
+// Crop/calendar: frontend calls Python backend directly (no proxy)
 
 async function start() {
   try {
@@ -61,8 +45,8 @@ async function start() {
     log('MongoDB error', e.message);
   }
   app.listen(PORT, () => {
-    console.log(`Node server on http://127.0.0.1:${PORT}`);
-    log('FASTAPI_URL', FASTAPI_URL, 'DEBUG', DEBUG);
+    console.log(`Node server on http://127.0.0.1:${PORT} (auth only)`);
+    log('DEBUG', DEBUG);
   });
 }
 
