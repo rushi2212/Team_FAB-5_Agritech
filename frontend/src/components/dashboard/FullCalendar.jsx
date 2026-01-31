@@ -1,5 +1,26 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { analyzeImage, generateCalendarWithDiseaseAnalysis } from '../../api';
 import SectionLoader from './SectionLoader';
+
+/** Normalize analysis text so unicode bullets (• ●) become markdown list items for proper rendering */
+function normalizeAnalysisMarkdown(text) {
+  if (!text || typeof text !== 'string') return text;
+  return text.replace(/(^|\n)([•●])\s+/g, '$1- ');
+}
+
+const analysisMarkdownComponents = {
+  h1: ({ children, ...props }) => <h1 className="text-lg font-bold text-earth-800 mt-3 mb-1" {...props}>{children}</h1>,
+  h2: ({ children, ...props }) => <h2 className="text-base font-bold text-earth-800 mt-3 mb-1" {...props}>{children}</h2>,
+  h3: ({ children, ...props }) => <h3 className="text-sm font-semibold text-earth-800 mt-3 mb-1" {...props}>{children}</h3>,
+  h4: ({ children, ...props }) => <h4 className="text-sm font-semibold text-earth-800 mt-2 mb-1" {...props}>{children}</h4>,
+  p: ({ children, ...props }) => <p className="text-earth-700 mb-2 text-sm leading-relaxed" {...props}>{children}</p>,
+  strong: ({ children, ...props }) => <strong className="font-semibold text-earth-800" {...props}>{children}</strong>,
+  em: ({ children, ...props }) => <em className="italic" {...props}>{children}</em>,
+  ul: ({ children, ...props }) => <ul className="list-disc pl-5 mb-3 space-y-1.5 text-earth-700 text-sm" {...props}>{children}</ul>,
+  ol: ({ children, ...props }) => <ol className="list-decimal pl-5 mb-3 space-y-1.5 text-earth-700 text-sm" {...props}>{children}</ol>,
+  li: ({ children, ...props }) => <li className="text-earth-700 pl-1 leading-relaxed" {...props}>{children}</li>,
+};
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -43,6 +64,12 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
     return dateToKey(d);
   });
   const [selectedDay, setSelectedDay] = useState(null);
+  const [diseaseAnalysis, setDiseaseAnalysis] = useState(null);
+  const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [regenerateLoading, setRegenerateLoading] = useState(false);
+  const [analysisError, setAnalysisError] = useState('');
+  const [recalibrateSuccess, setRecalibrateSuccess] = useState(false);
+  const fileInputRef = useRef(null);
 
   const days = calendar?.days || [];
   const startDay = calendar?.start_day ?? 1;
@@ -119,6 +146,40 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
     }
   };
 
+  const handleImageSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAnalysisError('');
+    setDiseaseAnalysis(null);
+    setAnalysisLoading(true);
+    try {
+      const { analysis } = await analyzeImage(file);
+      setDiseaseAnalysis(analysis);
+    } catch (err) {
+      setAnalysisError(err.message || 'Analysis failed');
+    } finally {
+      setAnalysisLoading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleRecalibrateCalendar = async () => {
+    if (!diseaseAnalysis?.trim()) return;
+    setAnalysisError('');
+    setRecalibrateSuccess(false);
+    setRegenerateLoading(true);
+    try {
+      await generateCalendarWithDiseaseAnalysis(diseaseAnalysis);
+      if (onRefresh) await onRefresh();
+      setRecalibrateSuccess(true);
+      setTimeout(() => setRecalibrateSuccess(false), 5000);
+    } catch (err) {
+      setAnalysisError(err.message || 'Recalibration failed');
+    } finally {
+      setRegenerateLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <SectionLoader title="Loading full calendar" subtitle="Preparing your cycle overview…" />
@@ -150,8 +211,59 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
               </p>
             </div>
           </div>
-          <button onClick={onRefresh} className="btn-secondary rounded-xl px-4 py-2 text-sm">Refresh</button>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              onChange={handleImageSelect}
+              className="hidden"
+              aria-label="Upload image for disease analysis"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={analysisLoading}
+              className="btn-secondary rounded-xl px-4 py-2 text-sm disabled:opacity-50 flex items-center gap-2"
+            >
+              {analysisLoading ? (
+                <>Analyzing…</>
+              ) : (
+                <>🖼️ Upload image</>
+              )}
+            </button>
+            <button onClick={onRefresh} className="btn-secondary rounded-xl px-4 py-2 text-sm">Refresh</button>
+          </div>
         </div>
+
+        {analysisError && (
+          <div className="mb-4 rounded-xl bg-red-50 text-red-700 px-3 py-2 text-sm">{analysisError}</div>
+        )}
+
+        {recalibrateSuccess && (
+          <div className="mb-4 rounded-xl bg-green-50 text-green-800 px-3 py-2 text-sm font-medium">
+            Calendar recalibrated successfully. The new calendar has replaced the previous one.
+          </div>
+        )}
+
+        {diseaseAnalysis && (
+          <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/50 p-4">
+            <h4 className="font-semibold text-earth-800 mb-2">Disease / field analysis</h4>
+            <p className="text-earth-600 text-xs mb-2">Full analysis from uploaded image (Tavily + government sources). Use the button below to re-run the pipeline and replace the calendar with disease-weighted tasks.</p>
+            <div className="text-sm text-earth-700 max-h-64 overflow-y-auto mb-4 pr-2 rounded-lg bg-white/60 p-3 border border-amber-100 max-w-none">
+              <ReactMarkdown components={analysisMarkdownComponents}>{normalizeAnalysisMarkdown(diseaseAnalysis)}</ReactMarkdown>
+            </div>
+            <button
+              type="button"
+              onClick={handleRecalibrateCalendar}
+              disabled={regenerateLoading}
+              className="btn-primary rounded-xl px-4 py-2 text-sm disabled:opacity-50"
+            >
+              {regenerateLoading ? 'Recalibrating…' : 'Recalibrate calendar'}
+            </button>
+            <p className="text-earth-500 text-xs mt-2">Re-evaluates the full pipeline (variable + persistent + past days + this analysis) and replaces the calendar with disease management given more weight.</p>
+          </div>
+        )}
 
         <div className="grid sm:grid-cols-3 gap-4 mb-6 text-sm">
           <div className="rounded-2xl bg-earth-50 p-4">
@@ -262,8 +374,8 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4"
           onClick={(e) => e.currentTarget === e.target && closeModal()}
         >
-          <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border border-earth-200 animate-rise-in">
-            <div className="px-6 pt-6 pb-4 border-b border-earth-100">
+          <div className="w-full max-w-6xl max-h-[90vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-earth-200 animate-rise-in">
+            <div className="px-6 pt-6 pb-4 border-b border-earth-100 shrink-0">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="font-display text-lg font-semibold text-earth-800">
@@ -283,61 +395,102 @@ export default function FullCalendar({ calendar, loading, onRefresh, onMarkAsDon
               </div>
             </div>
 
-            <div className="px-6 py-5">
+            <div className="px-6 py-5 flex-1 flex flex-col min-h-0 overflow-hidden">
               {panelError && (
-                <div className="mb-3 rounded-xl bg-red-50 text-red-700 px-3 py-2 text-sm">{panelError}</div>
+                <div className="mb-3 shrink-0 rounded-xl bg-red-50 text-red-700 px-3 py-2 text-sm">{panelError}</div>
               )}
 
-              {selectedData ? (
-                <>
-                  <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <span className="rounded-full bg-farm-100 text-farm-700 px-3 py-1 text-sm font-semibold">
-                      {selectedData.stage_name}
-                    </span>
-                    <span className="rounded-full bg-earth-100 text-earth-700 px-3 py-1 text-sm">
-                      {(selectedData.tasks || []).length} tasks
-                    </span>
-                  </div>
-
-                  {selectedData.weather && (
-                    <div className="grid sm:grid-cols-3 gap-3 text-sm mb-4">
-                      <div className="rounded-xl bg-earth-50 p-3">
-                        <p className="text-earth-500">Temperature</p>
-                        <p className="font-semibold text-earth-800">{selectedData.weather.temperature_c ?? '—'}°C</p>
-                      </div>
-                      <div className="rounded-xl bg-earth-50 p-3">
-                        <p className="text-earth-500">Humidity</p>
-                        <p className="font-semibold text-earth-800">{selectedData.weather.humidity_percent ?? '—'}%</p>
-                      </div>
-                      <div className="rounded-xl bg-earth-50 p-3">
-                        <p className="text-earth-500">Rainfall</p>
-                        <p className="font-semibold text-earth-800">{selectedData.weather.rainfall_mm ?? '—'} mm</p>
-                      </div>
+              {/* Day details: fixed height / shrink-0 so analysis can take remaining space */}
+              <div className="shrink-0">
+                {selectedData ? (
+                  <>
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      <span className="rounded-full bg-farm-100 text-farm-700 px-3 py-1 text-sm font-semibold">
+                        {selectedData.stage_name}
+                      </span>
+                      <span className="rounded-full bg-earth-100 text-earth-700 px-3 py-1 text-sm">
+                        {(selectedData.tasks || []).length} tasks
+                      </span>
                     </div>
-                  )}
 
-                  <div className="rounded-2xl border border-earth-200 p-4">
-                    <h4 className="font-semibold text-earth-800 mb-2">Tasks</h4>
-                    <ul className="space-y-2 text-sm text-earth-700">
-                      {(selectedData.tasks || []).map((t, i) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="mt-1 h-2 w-2 rounded-full bg-farm-500" />
-                          <span>{t}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    {selectedData.weather && (
+                      <div className="grid sm:grid-cols-3 gap-3 text-sm mb-4">
+                        <div className="rounded-xl bg-earth-50 p-3">
+                          <p className="text-earth-500">Temperature</p>
+                          <p className="font-semibold text-earth-800">{selectedData.weather.temperature_c ?? '—'}°C</p>
+                        </div>
+                        <div className="rounded-xl bg-earth-50 p-3">
+                          <p className="text-earth-500">Humidity</p>
+                          <p className="font-semibold text-earth-800">{selectedData.weather.humidity_percent ?? '—'}%</p>
+                        </div>
+                        <div className="rounded-xl bg-earth-50 p-3">
+                          <p className="text-earth-500">Rainfall</p>
+                          <p className="font-semibold text-earth-800">{selectedData.weather.rainfall_mm ?? '—'} mm</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="rounded-2xl border border-earth-200 p-4">
+                      <h4 className="font-semibold text-earth-800 mb-2">Tasks</h4>
+                      <ul className="space-y-2 text-sm text-earth-700">
+                        {(selectedData.tasks || []).map((t, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <span className="mt-1 h-2 w-2 rounded-full bg-farm-500" />
+                            <span>{t}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {selectedData.weather_note && (
+                      <p className="mt-3 text-earth-500 text-sm italic">{selectedData.weather_note}</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-earth-500 text-sm">No crop plan data for this date. Adjust cycle start date or check if this day is within your cycle.</p>
+                )}
+              </div>
+
+              {/* Analysis: takes remaining space, single scroll area for consistent rendering */}
+              {analysisLoading && (
+                <div className="mt-4 shrink-0 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+                  Analyzing image… (Tavily + government sources)
+                </div>
+              )}
+              {analysisError && (
+                <div className="mt-4 shrink-0 rounded-xl bg-red-50 text-red-700 px-4 py-3 text-sm">{analysisError}</div>
+              )}
+              {diseaseAnalysis && (
+                <div className="mt-4 flex-1 flex flex-col min-h-0 rounded-2xl border border-amber-200 bg-amber-50/50 overflow-hidden">
+                  <h4 className="font-semibold text-earth-800 mb-2 px-4 pt-4 shrink-0">Disease / field analysis</h4>
+                  <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-4 text-sm text-earth-700 rounded-lg bg-white/60 mx-4 mb-4 border border-amber-100 max-w-none">
+                    <div className="p-3">
+                      <ReactMarkdown components={analysisMarkdownComponents}>{normalizeAnalysisMarkdown(diseaseAnalysis)}</ReactMarkdown>
+                    </div>
                   </div>
-
-                  {selectedData.weather_note && (
-                    <p className="mt-3 text-earth-500 text-sm italic">{selectedData.weather_note}</p>
-                  )}
-                </>
-              ) : (
-                <p className="text-earth-500 text-sm">No crop plan data for this date. Adjust cycle start date or check if this day is within your cycle.</p>
+                  <div className="px-4 pb-4 shrink-0">
+                    <button
+                      type="button"
+                      onClick={handleRecalibrateCalendar}
+                      disabled={regenerateLoading}
+                      className="btn-primary rounded-xl px-4 py-2 text-sm disabled:opacity-50 w-full sm:w-auto"
+                    >
+                      {regenerateLoading ? 'Recalibrating…' : 'Recalibrate calendar'}
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
 
-            <div className="px-6 pb-6 flex flex-wrap gap-2">
+            <div className="px-6 pb-6 flex flex-wrap gap-2 shrink-0 border-t border-earth-100 pt-4">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={analysisLoading}
+                className="btn-secondary rounded-xl px-4 py-2 text-sm disabled:opacity-50 flex items-center gap-2"
+              >
+                {analysisLoading ? 'Analyzing…' : '🖼️ Upload image'}
+              </button>
               {selectedInfo?.cycleDay != null && onMarkAsDone && (
                 <button
                   type="button"

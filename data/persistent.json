@@ -3,13 +3,12 @@
     "crop_name": "rice",
     "state": "Maharashtra",
     "source_domains_used": [
-      "gazetteers.maharashtra.gov.in",
-      "ncert.nic.in",
-      "nfsm.gov.in",
-      "agritech.tnau.ac.in",
-      "pmfby.gov.in",
-      "imdpune.gov.in",
-      "agriwelfare.gov.in"
+      "https://imdpune.gov.in",
+      "https://pmfby.gov.in",
+      "https://nfsm.gov.in",
+      "https://agritech.tnau.ac.in",
+      "https://agriwelfare.gov.in",
+      "https://gazetteers.maharashtra.gov.in"
     ],
     "seasons": {
       "Kharif": {
@@ -19,24 +18,23 @@
           "July"
         ],
         "harvesting_months": [
-          "September",
-          "October",
-          "November"
+          "November",
+          "December"
         ],
-        "cycle_duration_days": 120,
+        "cycle_duration_days": 150,
         "stages": [
           {
             "name": "Nursery",
             "start_pct": 0.0,
-            "end_pct": 25.0,
-            "description": "Seedlings are grown in a nursery for about 20-25 days.",
+            "end_pct": 20.0,
+            "description": "Seedlings are grown in a nursery before transplanting.",
             "typical_months": [
               "June"
             ]
           },
           {
             "name": "Main field preparation",
-            "start_pct": 25.0,
+            "start_pct": 20.0,
             "end_pct": 30.0,
             "description": "Preparation of the main field for transplanting.",
             "typical_months": [
@@ -56,9 +54,8 @@
             "name": "Vegetative/Tillering",
             "start_pct": 40.0,
             "end_pct": 60.0,
-            "description": "The plant grows and develops tillers.",
+            "description": "Development of tillers and vegetative growth.",
             "typical_months": [
-              "July",
               "August"
             ]
           },
@@ -68,92 +65,453 @@
             "end_pct": 70.0,
             "description": "Initiation of panicle formation.",
             "typical_months": [
-              "August"
+              "September"
             ]
           },
           {
             "name": "Booting",
             "start_pct": 70.0,
             "end_pct": 80.0,
-            "description": "The booting stage where the panicle is pushed out.",
+            "description": "Booting stage where the panicle is pushed out.",
             "typical_months": [
-              "August"
+              "September"
             ]
           },
           {
             "name": "Flowering",
             "start_pct": 80.0,
             "end_pct": 85.0,
-            "description": "Flowering of the rice plant.",
-            "typical_months": [
-              "August",
-              "September"
-            ]
-          },
-          {
-            "name": "Grain filling",
-            "start_pct": 85.0,
-            "end_pct": 90.0,
-            "description": "Filling of grains in the panicle.",
-            "typical_months": [
-              "September"
-            ]
-          },
-          {
-            "name": "Maturity",
-            "start_pct": 90.0,
-            "end_pct": 95.0,
-            "description": "The grains mature and turn golden.",
+            "description": "Flowering of rice plants.",
             "typical_months": [
               "September",
               "October"
             ]
           },
           {
-            "name": "Harvesting",
+            "name": "Grain filling",
+            "start_pct": 85.0,
+            "end_pct": 95.0,
+            "description": "Filling of grains in the panicle.",
+            "typical_months": [
+              "October"
+            ]
+          },
+          {
+            "name": "Maturity",
             "start_pct": 95.0,
+            "end_pct": 98.0,
+            "description": "Grains mature and prepare for harvest.",
+            "typical_months": [
+              "November"
+            ]
+          },
+          {
+            "name": "Harvesting",
+            "start_pct": 98.0,
             "end_pct": 100.0,
             "description": "Harvesting of mature rice grains.",
             "typical_months": [
-              "October",
-              "November"
+              "November",
+              "December"
             ]
           }
         ],
         "pesticides": [
           {
-            "name": "Anilophos",
+            "name": "Anilofos",
             "stage": "Vegetative/Tillering",
             "start_pct": 40.0,
             "duration_pct": 20.0,
-            "dosage": "2% G",
+            "dosage": "1-2 kg/ha",
             "target_pests": "Stem borer"
           },
           {
             "name": "Acephate",
             "stage": "Flowering",
             "start_pct": 80.0,
-            "duration_pct": 5.0,
-            "dosage": "75% SP",
+            "duration_pct": 10.0,
+            "dosage": "1 kg/ha",
             "target_pests": "Thrips"
           }
         ],
         "fertilizers": [
           {
-            "name": "NPK",
-            "stage": "Main field preparation",
-            "start_pct": 25.0,
-            "duration_pct": 10.0,
-            "schedule": "Basal application",
-            "dosage": "90:60:60 kg/ha"
-          },
-          {
             "name": "DAP",
             "stage": "Nursery",
             "start_pct": 0.0,
-            "duration_pct": 25.0,
-            "schedule": "Basal application",
+            "duration_pct": 20.0,
+            "schedule": "",
             "dosage": "2 kg/cent of nursery area"
+          },
+          {
+            "name": "NPK",
+            "stage": "Main field preparation",
+            "start_pct": 20.0,
+            "duration_pct": 80.0,
+            "schedule": "",
+            "dosage": "175:60:60 kg N:P2O5:K2O/ha"
+          }
+        ]
+      }
+    },
+    "last_updated": "2026-02-01"
+  },
+  "wheat_uttar_pradesh": {
+    "crop_name": "wheat",
+    "state": "Uttar Pradesh",
+    "source_domains_used": [
+      "agritech.tnau.ac.in",
+      "nfsm.gov.in",
+      "ppqs.gov.in",
+      "csauk.ac.in"
+    ],
+    "seasons": {
+      "Rabi": {
+        "name": "",
+        "sowing_months": [
+          "October",
+          "November"
+        ],
+        "harvesting_months": [
+          "March",
+          "April"
+        ],
+        "cycle_duration_days": 150,
+        "stages": [
+          {
+            "name": "Sowing",
+            "start_pct": 0.0,
+            "end_pct": 5.0,
+            "description": "Sowing of seeds in the prepared field.",
+            "typical_months": [
+              "October",
+              "November"
+            ]
+          },
+          {
+            "name": "Crown Root",
+            "start_pct": 5.0,
+            "end_pct": 15.0,
+            "description": "Development of crown roots.",
+            "typical_months": [
+              "November"
+            ]
+          },
+          {
+            "name": "Tillering",
+            "start_pct": 15.0,
+            "end_pct": 30.0,
+            "description": "Formation of tillers.",
+            "typical_months": [
+              "November",
+              "December"
+            ]
+          },
+          {
+            "name": "Jointing",
+            "start_pct": 30.0,
+            "end_pct": 50.0,
+            "description": "Stem elongation begins.",
+            "typical_months": [
+              "December",
+              "January"
+            ]
+          },
+          {
+            "name": "Booting",
+            "start_pct": 50.0,
+            "end_pct": 70.0,
+            "description": "Boot formation occurs.",
+            "typical_months": [
+              "January",
+              "February"
+            ]
+          },
+          {
+            "name": "Flowering",
+            "start_pct": 70.0,
+            "end_pct": 85.0,
+            "description": "Flowering of the crop.",
+            "typical_months": [
+              "February",
+              "March"
+            ]
+          },
+          {
+            "name": "Dough",
+            "start_pct": 85.0,
+            "end_pct": 95.0,
+            "description": "Grain filling and dough formation.",
+            "typical_months": [
+              "March"
+            ]
+          },
+          {
+            "name": "Maturity",
+            "start_pct": 95.0,
+            "end_pct": 100.0,
+            "description": "Crop reaches physiological maturity.",
+            "typical_months": [
+              "March",
+              "April"
+            ]
+          },
+          {
+            "name": "Harvesting",
+            "start_pct": 100.0,
+            "end_pct": 100.0,
+            "description": "Harvesting of mature wheat.",
+            "typical_months": [
+              "April"
+            ]
+          }
+        ],
+        "pesticides": [
+          {
+            "name": "Chlorpyrifos",
+            "stage": "Soil Treatment",
+            "start_pct": 0.0,
+            "duration_pct": 5.0,
+            "dosage": "2-3 liters/ha",
+            "target_pests": "Soil borne pests"
+          }
+        ],
+        "fertilizers": [
+          {
+            "name": "Nitrogen (N)",
+            "stage": "Crown Root",
+            "start_pct": 5.0,
+            "duration_pct": 10.0,
+            "schedule": "Apply before sowing",
+            "dosage": "50% as basal dose"
+          },
+          {
+            "name": "Phosphorus (P2O5)",
+            "stage": "Sowing",
+            "start_pct": 0.0,
+            "duration_pct": 5.0,
+            "schedule": "Incorporate in the sowing line",
+            "dosage": "Full dose before sowing"
+          },
+          {
+            "name": "Potassium (K2O)",
+            "stage": "Sowing",
+            "start_pct": 0.0,
+            "duration_pct": 5.0,
+            "schedule": "Incorporate in the sowing line",
+            "dosage": "Full dose before sowing"
+          },
+          {
+            "name": "Nitrogen (N)",
+            "stage": "Top Dressing",
+            "start_pct": 30.0,
+            "duration_pct": 10.0,
+            "schedule": "Apply at crown root stage",
+            "dosage": "Remaining half of N"
+          }
+        ]
+      }
+    },
+    "last_updated": "2026-02-01"
+  },
+  "jowar_maharashtra": {
+    "crop_name": "jowar",
+    "state": "maharashtra",
+    "source_domains_used": [
+      "gazetteers.maharashtra.gov.in",
+      "nutricereals.dac.gov.in",
+      "pmfby.gov.in",
+      "agritech.tnau.ac.in",
+      "krishikosh.egranth.ac.in",
+      "imdpune.gov.in",
+      "ppqs.gov.in"
+    ],
+    "seasons": {
+      "Kharif": {
+        "name": "",
+        "sowing_months": [
+          "June",
+          "July"
+        ],
+        "harvesting_months": [
+          "October",
+          "November",
+          "December"
+        ],
+        "cycle_duration_days": 120,
+        "stages": [
+          {
+            "name": "Seedling stage",
+            "start_pct": 0.0,
+            "end_pct": 12.5,
+            "description": "Initial growth phase where seedlings emerge.",
+            "typical_months": [
+              "June",
+              "July"
+            ]
+          },
+          {
+            "name": "Vegetative stage",
+            "start_pct": 12.5,
+            "end_pct": 41.67,
+            "description": "Rapid growth phase with leaf development.",
+            "typical_months": [
+              "July",
+              "August"
+            ]
+          },
+          {
+            "name": "Flowering/Reproductive Stage",
+            "start_pct": 41.67,
+            "end_pct": 66.67,
+            "description": "Flowering occurs, leading to grain formation.",
+            "typical_months": [
+              "August",
+              "September"
+            ]
+          },
+          {
+            "name": "Maturity",
+            "start_pct": 66.67,
+            "end_pct": 87.5,
+            "description": "Grains mature and dry down.",
+            "typical_months": [
+              "September"
+            ]
+          }
+        ],
+        "pesticides": [],
+        "fertilizers": []
+      }
+    },
+    "last_updated": "2026-02-01"
+  },
+  "maize_maharashtra": {
+    "crop_name": "maize",
+    "state": "maharashtra",
+    "source_domains_used": [
+      "pmfby.gov.in",
+      "gazetteers.maharashtra.gov.in",
+      "angrau.ac.in",
+      "agritech.tnau.ac.in",
+      "epubs.icar.org.in",
+      "imdpune.gov.in",
+      "niphm.gov.in"
+    ],
+    "seasons": {
+      "Kharif": {
+        "name": "",
+        "sowing_months": [
+          "June",
+          "July"
+        ],
+        "harvesting_months": [
+          "September",
+          "October"
+        ],
+        "cycle_duration_days": 120,
+        "stages": [
+          {
+            "name": "Germination & establishment",
+            "start_pct": 0.0,
+            "end_pct": 12.0,
+            "description": "Initial growth phase where seeds germinate and establish roots.",
+            "typical_months": [
+              "June"
+            ]
+          },
+          {
+            "name": "Vegetative phase",
+            "start_pct": 12.0,
+            "end_pct": 39.0,
+            "description": "Growth of leaves and stems.",
+            "typical_months": [
+              "June",
+              "July"
+            ]
+          },
+          {
+            "name": "Flowering phase",
+            "start_pct": 39.0,
+            "end_pct": 54.0,
+            "description": "Development of flowers.",
+            "typical_months": [
+              "July"
+            ]
+          },
+          {
+            "name": "Cob formation",
+            "start_pct": 54.0,
+            "end_pct": 70.0,
+            "description": "Formation of maize cobs.",
+            "typical_months": [
+              "July",
+              "August"
+            ]
+          },
+          {
+            "name": "Maturity phase",
+            "start_pct": 70.0,
+            "end_pct": 92.0,
+            "description": "Cobs mature and dry out.",
+            "typical_months": [
+              "August",
+              "September"
+            ]
+          },
+          {
+            "name": "Harvesting",
+            "start_pct": 92.0,
+            "end_pct": 100.0,
+            "description": "Cobs are harvested.",
+            "typical_months": [
+              "September",
+              "October"
+            ]
+          }
+        ],
+        "pesticides": [
+          {
+            "name": "Atrazine",
+            "stage": "Weed control",
+            "start_pct": 12.0,
+            "duration_pct": 10.0,
+            "dosage": "1 kg/ha",
+            "target_pests": ""
+          },
+          {
+            "name": "Carbaryl",
+            "stage": "Insect control",
+            "start_pct": 39.0,
+            "duration_pct": 20.0,
+            "dosage": "2 kg/ha",
+            "target_pests": ""
+          }
+        ],
+        "fertilizers": [
+          {
+            "name": "Urea",
+            "stage": "Basal application",
+            "start_pct": 0.0,
+            "duration_pct": 10.0,
+            "schedule": "",
+            "dosage": "100 kg/ha"
+          },
+          {
+            "name": "Super Phosphate",
+            "stage": "Basal application",
+            "start_pct": 0.0,
+            "duration_pct": 10.0,
+            "schedule": "",
+            "dosage": "50 kg/ha"
+          },
+          {
+            "name": "Muriate of Potash",
+            "stage": "Top dressing",
+            "start_pct": 70.0,
+            "duration_pct": 10.0,
+            "schedule": "",
+            "dosage": "50 kg/ha"
           }
         ]
       }
