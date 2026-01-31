@@ -1,0 +1,7 @@
+{
+  "allowed_crops": [
+    "rice",
+    "wheat",
+    "cotton"
+  ]
+}
