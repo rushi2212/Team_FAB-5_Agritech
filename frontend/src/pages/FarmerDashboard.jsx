@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   generateVariable,
   getVariable,
@@ -11,6 +11,7 @@ import VariableGeneration from '../components/dashboard/VariableGeneration';
 import CalendarGeneration from '../components/dashboard/CalendarGeneration';
 import DailyDashboard from '../components/dashboard/DailyDashboard';
 import FullCalendar from '../components/dashboard/FullCalendar';
+import SectionLoader from '../components/dashboard/SectionLoader';
 
 export default function FarmerDashboard() {
   const [variable, setVariable] = useState(null);
@@ -97,81 +98,143 @@ export default function FarmerDashboard() {
     }
   };
 
-  // MVP flow: 1 Plan → 2 Calendar → 3 Today → 4 Full view → 5 Recommendations
+  // MVP flow: Plan → Calendar → Today → Full view → Recommendations
   const tabs = [
-    { id: 'variable', label: '1. Crop plan setup', icon: '🌱', step: 1 },
-    { id: 'calendar-gen', label: '2. Generate calendar', icon: '📅', step: 2 },
-    { id: 'daily', label: "3. Today's tasks", icon: '✅', step: 3 },
-    { id: 'full', label: '4. Full calendar', icon: '📋', step: 4 },
-    { id: 'crop', label: '5. Crop recommendations', icon: '🌾', step: 5 },
+    { id: 'variable', label: 'Crop plan setup', icon: '🌱' },
+    { id: 'calendar-gen', label: 'Generate calendar', icon: '📅' },
+    { id: 'daily', label: "Today's tasks", icon: '✅' },
+    { id: 'full', label: 'Full calendar', icon: '📋' },
+    { id: 'crop', label: 'Crop recommendations', icon: '🌾' },
   ];
+
+  const overview = useMemo(() => {
+    const currentDay = variable?.day_of_cycle ?? null;
+    const startDay = calendar?.start_day ?? 1;
+    const days = calendar?.days || [];
+    const dayIndex = currentDay != null ? currentDay - startDay : null;
+    const todayEntry = dayIndex != null && dayIndex >= 0 && dayIndex < days.length ? days[dayIndex] : null;
+    return {
+      location: variable?.location?.city && variable?.location?.state ? `${variable.location.city}, ${variable.location.state}` : '—',
+      crop: variable?.crop?.crop_name ? `${variable.crop.crop_name} · ${variable.crop.season}` : '—',
+      day: currentDay ?? '—',
+      tasks: todayEntry?.tasks?.length ?? 0,
+      stage: todayEntry?.stage_name ?? '—',
+      cycle: calendar?.cycle_duration_days ?? '—',
+    };
+  }, [variable, calendar]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="font-display text-3xl font-bold text-earth-800 mb-2">Farmer dashboard</h1>
-      <p className="text-earth-600 mb-6">
-        Set up your crop plan, generate the calendar, then view today’s tasks or the full schedule.
-      </p>
-
-      {/* MVP steps overview */}
-      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 mb-6 p-4 rounded-2xl bg-farm-50/80 border border-farm-200/80">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => setActiveSection(t.id)}
-            className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${activeSection === t.id
-              ? 'bg-farm-600 text-white shadow-glow'
-              : 'bg-white text-earth-700 hover:bg-farm-100 border border-earth-200/80'
-              }`}
-          >
-            <span>{t.step}</span>
-            <span className="truncate">{t.label.replace(/^\d\.\s/, '')}</span>
-          </button>
-        ))}
+      <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+        <div>
+          <h1 className="font-display text-3xl font-bold text-earth-800">Farmer dashboard</h1>
+          <p className="text-earth-600 mt-2">
+            Set up your crop plan, generate the calendar, then view today’s tasks or the full schedule.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-earth-500">
+          <span className="inline-flex h-2 w-2 rounded-full bg-farm-500 animate-pulse" />
+          Live farm insights
+        </div>
       </div>
 
-      {error && (
-        <div className="mb-6 rounded-xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 flex items-center justify-between">
-          <span>{error}</span>
-          <button onClick={() => setError('')} className="text-red-500 hover:text-red-700">
-            ×
-          </button>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+        <div className="card p-4 animate-rise-in">
+          <p className="text-xs uppercase tracking-wide text-earth-500">Location</p>
+          <p className="mt-2 font-semibold text-earth-800">{overview.location}</p>
         </div>
-      )}
+        <div className="card p-4 animate-rise-in">
+          <p className="text-xs uppercase tracking-wide text-earth-500">Crop & Season</p>
+          <p className="mt-2 font-semibold text-earth-800">{overview.crop}</p>
+        </div>
+        <div className="card p-4 animate-rise-in">
+          <p className="text-xs uppercase tracking-wide text-earth-500">Cycle day</p>
+          <p className="mt-2 font-semibold text-earth-800">Day {overview.day}</p>
+        </div>
+        <div className="card p-4 animate-rise-in">
+          <p className="text-xs uppercase tracking-wide text-earth-500">Today</p>
+          <p className="mt-2 font-semibold text-earth-800">{overview.stage} · {overview.tasks} tasks</p>
+        </div>
+      </div>
 
-      {/* Sections */}
-      {activeSection === 'crop' && (
-        <CropSelection onSelect={() => { }} />
-      )}
-      {activeSection === 'variable' && (
-        <VariableGeneration
-          variable={variable}
-          loading={loadingVar}
-          onGenerate={handleGenerateVariable}
-          onRefresh={loadVariable}
-        />
-      )}
-      {activeSection === 'calendar-gen' && (
-        <CalendarGeneration
-          calendar={calendar}
-          variable={variable}
-          onGenerate={handleGenerateCalendar}
-          onRefresh={loadCalendar}
-        />
-      )}
-      {activeSection === 'daily' && (
-        <DailyDashboard variable={variable} calendar={calendar} loading={loadingVar || loadingCal} />
-      )}
-      {activeSection === 'full' && (
-        <FullCalendar
-          calendar={calendar}
-          loading={loadingCal}
-          onRefresh={loadCalendar}
-          onMarkAsDone={handleMarkAsDone}
-          onCheckThreshold={handleCheckThreshold}
-        />
-      )}
+      <div className="grid lg:grid-cols-[250px_1fr] gap-6">
+        <aside className="card p-4 h-fit lg:sticky lg:top-6">
+          <h2 className="font-display text-sm font-semibold text-earth-600 mb-3">Dashboard sections</h2>
+          <div className="space-y-2">
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setActiveSection(t.id)}
+                className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${activeSection === t.id
+                  ? 'bg-farm-600 text-white shadow-glow'
+                  : 'bg-white text-earth-700 hover:bg-farm-100 border border-earth-200/80'
+                  }`}
+                aria-current={activeSection === t.id ? 'page' : undefined}
+              >
+                <span className="text-lg">{t.icon}</span>
+                <span className="truncate">{t.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="mt-6 rounded-xl bg-farm-50 border border-farm-200 p-3 text-xs text-earth-600">
+            Cycle length: <span className="font-semibold text-earth-800">{overview.cycle} days</span>
+          </div>
+        </aside>
+
+        <section className="space-y-6">
+          {error && (
+            <div className="rounded-xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 flex items-center justify-between animate-fade-in">
+              <span>{error}</span>
+              <button onClick={() => setError('')} className="text-red-500 hover:text-red-700">
+                ×
+              </button>
+            </div>
+          )}
+
+          {(loadingVar || loadingCal) && (
+            <div className="card p-4 flex items-center gap-3 text-sm text-earth-600">
+              <div className="h-5 w-5 rounded-full border-2 border-farm-500 border-t-transparent animate-spin" />
+              Syncing latest farm data…
+            </div>
+          )}
+
+          {activeSection === 'crop' && (
+            <CropSelection onSelect={() => { }} />
+          )}
+          {activeSection === 'variable' && (
+            <VariableGeneration
+              variable={variable}
+              loading={loadingVar}
+              onGenerate={handleGenerateVariable}
+              onRefresh={loadVariable}
+            />
+          )}
+          {activeSection === 'calendar-gen' && (
+            <CalendarGeneration
+              calendar={calendar}
+              variable={variable}
+              onGenerate={handleGenerateCalendar}
+              onRefresh={loadCalendar}
+            />
+          )}
+          {activeSection === 'daily' && (
+            <DailyDashboard variable={variable} calendar={calendar} loading={loadingVar || loadingCal} />
+          )}
+          {activeSection === 'full' && (
+            <FullCalendar
+              calendar={calendar}
+              loading={loadingCal}
+              onRefresh={loadCalendar}
+              onMarkAsDone={handleMarkAsDone}
+              onCheckThreshold={handleCheckThreshold}
+            />
+          )}
+          {!loadingVar && !loadingCal && !variable && activeSection !== 'crop' && (
+            <SectionLoader title="Getting farm insights" subtitle="Set up your crop plan to start." />
+          )}
+        </section>
+      </div>
     </div>
   );
 }

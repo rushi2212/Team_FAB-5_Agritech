@@ -1,20 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { getMe } from '../api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
 
-  useEffect(() => {
-    getMe()
-      .then((d) => setUser(d.user))
-      .catch(() => setUser(null));
-  }, []);
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
+  const handleLogout = () => {
+    logout();
     navigate('/');
   };
 
@@ -37,7 +29,7 @@ export default function Navbar() {
                 </Link>
                 <span className="text-earth-500 text-sm hidden sm:inline">{user.name}</span>
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="rounded-xl px-4 py-2 text-earth-600 hover:bg-earth-100 font-medium transition"
                 >
                   Logout
