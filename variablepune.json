@@ -1,0 +1,90 @@
+{
+  "location": {
+    "state": "Maharashtra",
+    "city": "Pune",
+    "coordinates": {
+      "lat": 18.51957,
+      "lon": 73.85535
+    }
+  },
+  "crop": {
+    "crop_name": "Wheat",
+    "season": "Kharif"
+  },
+  "soil_type": "Vertisols",
+  "soil_map": {
+    "source": "ISRIC SoilGrids v2",
+    "classification_endpoint": "classification/query",
+    "properties_endpoint": "properties/query",
+    "coordinates": {
+      "lat": 18.51957,
+      "lon": 73.85535
+    },
+    "wrb_class_name": "Vertisols",
+    "wrb_class_value": 29,
+    "wrb_class_probability": [
+      [
+        "Vertisols",
+        35
+      ],
+      [
+        "Cambisols",
+        16
+      ],
+      [
+        "Leptosols",
+        12
+      ],
+      [
+        "Luvisols",
+        12
+      ],
+      [
+        "Fluvisols",
+        5
+      ]
+    ],
+    "texture_class_usda": "Clay loam",
+    "depths_available": [
+      "0-5cm",
+      "5-15cm",
+      "15-30cm"
+    ],
+    "properties_note": "Used nearby point (lat=18.5396, lon=73.8554); exact point had no data (urban mask)."
+  },
+  "soil_properties": {
+    "0-5cm": {
+      "bdod": 150,
+      "cfvo": 171,
+      "clay": 38.9,
+      "phh2o": 69,
+      "sand": 36.8,
+      "silt": 24.3,
+      "soc": 211
+    },
+    "5-15cm": {
+      "bdod": 152,
+      "cfvo": 153,
+      "clay": 39.7,
+      "phh2o": 69,
+      "sand": 35.7,
+      "silt": 24.6,
+      "soc": 132
+    },
+    "15-30cm": {
+      "bdod": 153,
+      "cfvo": 174,
+      "clay": 41.6,
+      "phh2o": 69,
+      "sand": 34.5,
+      "silt": 23.9,
+      "soc": 88
+    }
+  },
+  "climate": {
+    "date": "2026-01-31",
+    "temperature_c": 25.0,
+    "humidity_percent": 50,
+    "rainfall_mm": 0.0
+  }
+}
