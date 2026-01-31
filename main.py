@@ -9,7 +9,8 @@ import os
 import sys
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
+import tempfile
+from fastapi import Body, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
@@ -99,6 +100,11 @@ class CropRecommendationRequest(BaseModel):
     city: str = Field(..., min_length=1, description="City (e.g. Pune)")
     soil_type: str = Field(..., min_length=1,
                            description="Soil type (e.g. loamy)")
+
+
+class GenerateCalendarRequest(BaseModel):
+    """Optional body for calendar generation (e.g. disease analysis from image)."""
+    disease_analysis: str | None = Field(None, description="In-depth disease/field analysis; calendar will weight disease management tasks.")
 
 
 # ---------------------------------------------------------------------------
@@ -201,6 +207,49 @@ def get_calendar():
 
 
 # ---------------------------------------------------------------------------
+# Image analysis (research agent) for disease → calendar regeneration
+# ---------------------------------------------------------------------------
+
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+
+
+@app.post("/analyze-image", response_class=JSONResponse)
+def analyze_image_endpoint(image: UploadFile = File(..., description="Plant/crop image for disease analysis")):
+    """
+    Run research agent on uploaded image: in-depth disease analysis using
+    Tavily (government/agri sources). Returns { "analysis": "..." }.
+    """
+    log.debug("POST /analyze-image filename=%s", image.filename)
+    if image.content_type and image.content_type.lower() not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=400, detail="Allowed types: JPEG, PNG, GIF, WebP")
+    try:
+        from services.research_agent import run_research_agent
+    except ImportError as e:
+        log.debug("research_agent import error: %s", e)
+        raise HTTPException(status_code=500, detail="Research agent not available.") from e
+    try:
+        suffix = ".jpg"
+        if image.filename and "." in image.filename:
+            ext = image.filename.rsplit(".", 1)[-1].lower()
+            if ext in ("png", "gif", "webp"):
+                suffix = f".{ext}"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            content = image.file.read()
+            tmp.write(content)
+            tmp_path = tmp.name
+        try:
+            analysis = run_research_agent(image_path=tmp_path)
+            return {"analysis": analysis}
+        finally:
+            Path(tmp_path).unlink(missing_ok=True)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        log.debug("analyze-image error: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
 # Crop prediction
 # ---------------------------------------------------------------------------
 
@@ -248,12 +297,14 @@ def recommend_crops(body: CropRecommendationRequest):
 # ---------------------------------------------------------------------------
 
 @app.post("/generate-calendar", response_class=JSONResponse)
-def generate_calendar_endpoint():
+def generate_calendar_endpoint(body: GenerateCalendarRequest | None = Body(None)):
     """
     Step 2: Run calendar agent. Uses variable.json and persistent.json.
-    Creates or remakes calendar when threshold is hit; returns calendar or message.
+    Optional body.disease_analysis: in-depth analysis from image; calendar
+    will give more weight to disease management tasks.
     """
-    log.debug("POST /generate-calendar")
+    disease_analysis = body.disease_analysis if body else None
+    log.debug("POST /generate-calendar disease_analysis=%s", "yes" if disease_analysis else "no")
     try:
         import sys
         from io import StringIO
@@ -261,7 +312,7 @@ def generate_calendar_endpoint():
         old_stdout = sys.stdout
         sys.stdout = StringIO()
         try:
-            run_calendar_agent()
+            run_calendar_agent(disease_analysis=disease_analysis)
             msg = sys.stdout.getvalue().strip()
             log.debug("calendar_agent stdout: %s",
                       msg[:200] if msg else "(none)")

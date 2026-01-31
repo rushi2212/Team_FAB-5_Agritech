@@ -121,6 +121,34 @@ export async function generateCalendar() {
   return data;
 }
 
+/** Upload image for disease analysis (research agent). Returns { analysis } */
+export async function analyzeImage(file) {
+  const url = `${CROP_API}/analyze-image`;
+  if (DEBUG) console.log("[api] POST", url, file?.name);
+  const form = new FormData();
+  form.append("image", file);
+  const res = await fetch(url, { method: "POST", body: form });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok)
+    throw new Error(data.detail || data.message || "Image analysis failed");
+  return data;
+}
+
+/** Regenerate calendar with disease analysis (more weight to disease management) */
+export async function generateCalendarWithDiseaseAnalysis(analysis) {
+  const url = `${CROP_API}/generate-calendar`;
+  if (DEBUG) console.log("[api] POST", url, "disease_analysis=...");
+  const res = await fetch(url, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify({ disease_analysis: analysis || "" }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok)
+    throw new Error(data.detail || data.message || "Generate calendar failed");
+  return data;
+}
+
 export async function recommendCrops({ city, soil_type }) {
   const url = `${CROP_API}/recommend-crops`;
   if (DEBUG) console.log("[api] POST", url, { city, soil_type });

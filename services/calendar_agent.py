@@ -204,8 +204,9 @@ def build_calendar_prompt(
     cycle_duration_days: int,
     start_day: int,
     past_days: list[dict[str, Any]] | None = None,
+    disease_analysis: str | None = None,
 ) -> str:
-    """Build prompt for OpenAI: full calendar (start_day=1) or from start_day onward (remake). If remake, include past_days for context."""
+    """Build prompt for OpenAI: full calendar (start_day=1) or from start_day onward (remake). If remake, include past_days for context. Optional disease_analysis gives extra weight to disease management."""
     loc = variable.get("location") or {}
     crop = variable.get("crop") or {}
     season_name = crop.get("season") or ""
@@ -224,8 +225,19 @@ def build_calendar_prompt(
 {json.dumps(past_days, indent=2)}
 """
 
+    disease_section = ""
+    if disease_analysis and disease_analysis.strip():
+        disease_section = f"""
+**Disease / field analysis (give HIGH PRIORITY — incorporate into task planning):**
+The following in-depth analysis came from a field image and government/agri sources. Use it to add or emphasize disease and pest management tasks, recommended treatments, and preventive steps at the right stages. Do not ignore this section.
+---
+{disease_analysis.strip()}
+---
+"""
+
     prompt = f"""You are an expert agronomist. Plan by **day index** only (do not use any calendar dates). Given the inputs below, produce a crop calendar as a single JSON object.
 {past_section}
+{disease_section}
 **Location and crop (from variable.json):**
 - State: {loc.get('state')}, City: {loc.get('city')}
 - Crop: {crop.get('crop_name')}, Season: {season_name}
@@ -243,7 +255,7 @@ def build_calendar_prompt(
 **16-day weather forecast (apply to days 1–16; days 17+ get repeated 16th day):**
 {json.dumps(forecast, indent=2)}
 
-**Task:** For each day from **{start_day}** to **{cycle_duration_days}**, determine the crop stage (from the stages list, using start_pct/end_pct of cycle) and list **detailed tasks** for that day. Use only day_index. Output valid JSON only, no markdown or explanation.
+**Task:** For each day from **{start_day}** to **{cycle_duration_days}**, determine the crop stage (from the stages list, using start_pct/end_pct of cycle) and list **detailed tasks** for that day. Use only day_index. Output valid JSON only, no markdown or explanation. If disease/field analysis was provided above, give **more weight** to disease and pest management tasks (scouting, sprays, sanitation) at the relevant stages.
 
 **Required JSON shape:** A single object with a "days" array. Each element: {{ "day_index": N, "stage_name": "...", "tasks": [...] }}. For day_index 47 and above you may add "weather_note": "Short aggregate outlook". Do not include "date" or "weather" in any object.
 
@@ -388,8 +400,8 @@ def save_calendar(
     print(f"Written to {CALENDAR_PATH} (days {start_day}–{end_day})")
 
 
-def run() -> None:
-    """Load variable and persistent; ensure crop; decide regenerate; fetch 16-day forecast; generate full calendar; save."""
+def run(disease_analysis: str | None = None) -> None:
+    """Load variable and persistent; ensure crop; decide regenerate; fetch 16-day forecast; generate full calendar; save. Optional disease_analysis: in-depth analysis from image; calendar will weight disease management."""
     variable = load_variable()
     persistent = load_persistent()
 
@@ -417,7 +429,9 @@ def run() -> None:
     calendar = load_calendar()
     current_climate = variable.get("climate") or {}
 
-    if calendar is None:
+    if disease_analysis and disease_analysis.strip():
+        do_regenerate = True  # Force regenerate when disease analysis is provided
+    elif calendar is None:
         do_regenerate = True
     else:
         do_regenerate = should_regenerate(current_climate, calendar, current_day)
@@ -448,7 +462,7 @@ def run() -> None:
         past_days.sort(key=lambda d: d.get("day_index", 0))
 
     prompt = build_calendar_prompt(
-        variable, persistent_entry, forecast, cycle_duration_days, start_day, past_days=past_days
+        variable, persistent_entry, forecast, cycle_duration_days, start_day, past_days=past_days, disease_analysis=disease_analysis
     )
     days_payload = call_openai_reasoning(prompt, cycle_duration_days, start_day)
     new_days = days_payload.get("days") or []
