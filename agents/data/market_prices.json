@@ -96,5 +96,19 @@
       "historical_pattern_analysis"
     ],
     "last_updated": "2026-02-01"
+  },
+  "_maharashtra_kharif": {
+    "predicted_price_range": {
+      "min": 1715,
+      "max": 2189
+    },
+    "average_price": 1948,
+    "trend": "stable",
+    "confidence": "high",
+    "data_sources": [
+      "agmarknet",
+      "historical_pattern_analysis"
+    ],
+    "last_updated": "2026-02-01"
   }
 }

@@ -1,20 +1,31 @@
 {
   "crop_name": "rice",
   "crop_stage": "Nursery",
-  "day_of_cycle": 17,
-  "risk_level": "low",
-  "risk_score": 0,
+  "day_of_cycle": 10,
+  "risk_level": "medium",
+  "risk_score": 30.0,
   "pest_risks": [],
-  "disease_risks": [],
+  "disease_risks": [
+    {
+      "name": "Blast Disease",
+      "severity": "medium",
+      "score": 30.0,
+      "description": "Fungal disease causing diamond-shaped lesions on leaves",
+      "reason": "temperature 20.4°C favorable"
+    }
+  ],
   "preventive_actions": [
-    "Monitor crop regularly for early signs of pests/diseases",
-    "Maintain field sanitation and remove crop residues",
-    "Ensure proper drainage to prevent waterlogging",
-    "Use pheromone traps for pest monitoring"
+    "Increase monitoring frequency to twice weekly",
+    "Remove and destroy infected plants immediately",
+    "Apply recommended bio-pesticides (Neem-based products)",
+    "Ensure adequate plant spacing for air circulation",
+    "Apply sticky traps to monitor insect populations",
+    "Spray Trichoderma for fungal disease prevention",
+    "Target diseases: Blast Disease"
   ],
   "weather_factors": {
-    "temperature_c": 19.1,
-    "humidity_percent": 68,
+    "temperature_c": 20.4,
+    "humidity_percent": 64,
     "rainfall_mm": 0.0
   },
   "email_sent": false,

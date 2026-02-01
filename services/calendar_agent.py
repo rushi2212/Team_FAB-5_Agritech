@@ -264,19 +264,30 @@ Provide exactly **{num_days}** objects in the "days" array, for day_index **{sta
 
 
 def _parse_json_response(content: str) -> dict[str, Any]:
-    """Parse LLM JSON; fix common issues (trailing commas) and retry on failure."""
+    """Parse LLM JSON; fix common issues (trailing commas, missing delimiters) via json_repair on failure."""
     content = content.strip()
-    for attempt in range(2):
-        try:
-            return json.loads(content)
-        except json.JSONDecodeError as e:
-            if attempt == 0:
-                # Remove trailing commas before ] or }
-                content = re.sub(r",\s*([}\]])", r"\1", content)
-            else:
-                raise ValueError(f"Invalid JSON from model (e.g. line {e.lineno}): {e}") from e
-    return {}  # unreachable
-
+    # 1) Try standard json.loads (fast path)
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        pass
+    # 2) Remove trailing commas and retry
+    content = re.sub(r",\s*([}\]])", r"\1", content)
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        pass
+    # 3) Use json_repair to fix missing commas, unescaped chars, etc.
+    try:
+        import json_repair
+        return json_repair.loads(content)
+    except ImportError:
+        raise ValueError(
+            "Invalid JSON from model and json-repair not installed. "
+            "Install with: pip install json-repair"
+        ) from None
+    except Exception as e:
+        raise ValueError(f"Invalid JSON from model (could not repair): {e}") from e
 
 def call_openai_reasoning(prompt: str, cycle_duration_days: int, start_day: int) -> dict[str, Any]:
     """Call OpenAI reasoning model; returns days array for day_index start_day to cycle_duration_days."""
