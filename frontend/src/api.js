@@ -1,6 +1,6 @@
 // Auth: Node backend only. Crop/calendar: Python (FastAPI) backend directly.
-const AUTH_API = import.meta.env.VITE_AUTH_API || "https://team-fab-5-agritech-1.onrender.com/";
-const CROP_API = import.meta.env.VITE_CROP_API || "https://team-fab-5-agritech.onrender.com/";
+const AUTH_API = import.meta.env.VITE_AUTH_API || "https://team-fab-5-agritech-1.onrender.com";
+const CROP_API = import.meta.env.VITE_CROP_API || "https://team-fab-5-agritech.onrender.com";
 
 const DEBUG = import.meta.env.VITE_DEBUG === "1";
 
