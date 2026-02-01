@@ -60,7 +60,7 @@ export default function PestRiskAssessment({ variable, calendar, loading }) {
     setLoadingRisk(true);
     setError('');
     setEmailSent(false);
-    
+
     try {
       const data = await assessPestRisk({
         user_email: email
@@ -271,15 +271,15 @@ export default function PestRiskAssessment({ variable, calendar, loading }) {
 
             {/* No Risks Found */}
             {(!riskData.pest_risks || riskData.pest_risks.length === 0) &&
-             (!riskData.disease_risks || riskData.disease_risks.length === 0) && (
-              <div className="card p-6 bg-farm-50 border border-farm-200">
-                <div className="text-center py-4">
-                  <span className="text-4xl mb-3 block">✅</span>
-                  <p className="font-medium text-farm-800 mb-1">No Immediate Threats Detected</p>
-                  <p className="text-sm text-earth-600">Current conditions are favorable for your crop</p>
+              (!riskData.disease_risks || riskData.disease_risks.length === 0) && (
+                <div className="card p-6 bg-farm-50 border border-farm-200">
+                  <div className="text-center py-4">
+                    <span className="text-4xl mb-3 block">✅</span>
+                    <p className="font-medium text-farm-800 mb-1">No Immediate Threats Detected</p>
+                    <p className="text-sm text-earth-600">Current conditions are favorable for your crop</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Preventive Actions */}
             {riskData.preventive_actions && riskData.preventive_actions.length > 0 && (
@@ -295,6 +295,40 @@ export default function PestRiskAssessment({ variable, calendar, loading }) {
                         {idx + 1}
                       </span>
                       <span className="text-earth-800 text-sm flex-1">{action}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Calendar hazard alerts: LLM-flagged hazardous content in calendar */}
+            {riskData.calendar_hazard_alerts && riskData.calendar_hazard_alerts.length > 0 && (
+              <div className="card p-6 bg-red-50 border-2 border-red-200">
+                <h3 className="font-medium text-red-900 mb-2 flex items-center gap-2">
+                  <span className="text-xl">⚠️</span>
+                  Hazardous content detected in calendar
+                </h3>
+                <p className="text-sm text-red-800 mb-4">
+                  The following task(s) were flagged by our safety review as hazardous or unsafe. They have been removed from your calendar view. Do not follow them.
+                </p>
+                <ul className="space-y-3">
+                  {riskData.calendar_hazard_alerts.map((alert, idx) => (
+                    <li key={idx} className="rounded-xl bg-white border border-red-200 p-4">
+                      <p className="text-sm font-semibold text-red-900 mb-2">Day {alert.day_index}</p>
+                      <ul className="space-y-2">
+                        {(alert.flagged_tasks || alert.tasks_removed || []).map((item, i) => {
+                          const taskText = typeof item === 'string' ? item : (item?.task || item);
+                          const reason = typeof item === 'object' && item?.hazard_reason ? item.hazard_reason : null;
+                          return (
+                            <li key={i} className="text-sm text-red-800">
+                              <span className="font-medium">"{taskText}"</span>
+                              {reason && (
+                                <p className="text-red-700 mt-1 ml-2 text-xs">Reason: {reason}</p>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </li>
                   ))}
                 </ul>
@@ -335,10 +369,10 @@ export default function PestRiskAssessment({ variable, calendar, loading }) {
 
             {/* Last Updated */}
             <div className="text-center text-xs text-earth-500">
-              Last assessed: {riskData.last_updated ? new Date(riskData.last_updated).toLocaleDateString('en-IN', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              Last assessed: {riskData.last_updated ? new Date(riskData.last_updated).toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
               }) : 'N/A'}
             </div>
 

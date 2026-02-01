@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  sendChatMessage, 
-  getChatHistory, 
-  clearChatHistory, 
-  getChatSuggestions 
+import ReactMarkdown from 'react-markdown';
+import {
+  sendChatMessage,
+  getChatHistory,
+  clearChatHistory,
+  getChatSuggestions
 } from '../../api';
 
 /**
@@ -23,26 +24,26 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
   const [isListening, setIsListening] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [error, setError] = useState(null);
-  
+
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
-  
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  
+
   // Load chat history and suggestions on mount
   useEffect(() => {
     loadChatHistory();
     loadSuggestions();
     initializeSpeechRecognition();
   }, []);
-  
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-  
+
   const loadChatHistory = async () => {
     try {
       const data = await getChatHistory(sessionId);
@@ -59,7 +60,7 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
       console.error('Failed to load chat history:', err);
     }
   };
-  
+
   const loadSuggestions = async () => {
     try {
       const data = await getChatSuggestions(sessionId);
@@ -68,7 +69,7 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
       console.error('Failed to load suggestions:', err);
     }
   };
-  
+
   const initializeSpeechRecognition = () => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -76,39 +77,39 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = 'en-IN'; // Indian English
-      
+
       recognitionRef.current.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         setInputMessage(transcript);
         setIsListening(false);
       };
-      
+
       recognitionRef.current.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
         setError('Voice input failed. Please try again.');
       };
-      
+
       recognitionRef.current.onend = () => {
         setIsListening(false);
       };
     }
   };
-  
+
   const handleSendMessage = async (messageText = null) => {
     const message = messageText || inputMessage.trim();
     if (!message) return;
-    
+
     // Add user message to UI
     const userMessage = { role: 'user', content: message, sources: [] };
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await sendChatMessage(message, sessionId);
-      
+
       // Add assistant message with sources
       const assistantMessage = {
         role: 'assistant',
@@ -116,18 +117,18 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
         sources: response.sources || [],
         tools_used: response.tools_used || []
       };
-      
+
       setMessages(prev => [...prev, assistantMessage]);
-      
+
       // Update suggestions
       if (response.suggestions && response.suggestions.length > 0) {
         setSuggestions(response.suggestions);
       }
-      
+
     } catch (err) {
       console.error('Chat error:', err);
       setError('Failed to get response. Please try again.');
-      
+
       // Add error message
       const errorMessage = {
         role: 'assistant',
@@ -140,20 +141,20 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
       setIsLoading(false);
     }
   };
-  
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
-  
+
   const toggleVoiceInput = () => {
     if (!recognitionRef.current) {
       setError('Voice input not supported in your browser');
       return;
     }
-    
+
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
@@ -162,7 +163,7 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
       recognitionRef.current.start();
     }
   };
-  
+
   const handleClearHistory = async () => {
     if (window.confirm('Are you sure you want to clear the chat history?')) {
       try {
@@ -175,12 +176,12 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
       }
     }
   };
-  
+
   const handleSuggestionClick = (suggestion) => {
     setInputMessage(suggestion);
     handleSendMessage(suggestion);
   };
-  
+
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-lg">
       {/* Header */}
@@ -214,7 +215,7 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
           )}
         </div>
       </div>
-      
+
       {/* Quick Suggestions */}
       {suggestions.length > 0 && messages.length === 0 && (
         <div className="p-4 border-b bg-green-50">
@@ -232,7 +233,7 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
           </div>
         </div>
       )}
-      
+
       {/* Error Alert */}
       {error && (
         <div className="p-3 m-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center justify-between">
@@ -244,7 +245,7 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
           </button>
         </div>
       )}
-      
+
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && !isLoading && (
@@ -256,11 +257,11 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
             <p className="text-sm">Ask me anything about your crops, weather, market prices, or pest management.</p>
           </div>
         )}
-        
+
         {messages.map((message, idx) => (
           <MessageBubble key={idx} message={message} />
         ))}
-        
+
         {/* Typing Indicator */}
         {isLoading && (
           <div className="flex items-start gap-3">
@@ -276,10 +277,10 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
             </div>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
-      
+
       {/* Input Area */}
       <div className="p-4 border-t bg-gray-50">
         <div className="flex items-end gap-2">
@@ -297,11 +298,10 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
             {recognitionRef.current && (
               <button
                 onClick={toggleVoiceInput}
-                className={`absolute right-3 bottom-3 p-2 rounded-full transition ${
-                  isListening 
-                    ? 'bg-red-500 text-white animate-pulse' 
+                className={`absolute right-3 bottom-3 p-2 rounded-full transition ${isListening
+                    ? 'bg-red-500 text-white animate-pulse'
                     : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                }`}
+                  }`}
                 title={isListening ? 'Stop listening' : 'Voice input'}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -331,31 +331,56 @@ export default function ChatInterface({ sessionId = 'default', onClose }) {
  */
 function MessageBubble({ message }) {
   const [showSources, setShowSources] = useState(false);
-  
+
   const isUser = message.role === 'user';
   const hasError = message.isError;
-  
+
   return (
     <div className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
       {/* Avatar */}
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0 ${
-        isUser ? 'bg-blue-600' : hasError ? 'bg-red-500' : 'bg-green-600'
-      }`}>
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0 ${isUser ? 'bg-blue-600' : hasError ? 'bg-red-500' : 'bg-green-600'
+        }`}>
         {isUser ? '👤' : hasError ? '⚠️' : '🤖'}
       </div>
-      
+
       {/* Message Content */}
       <div className={`max-w-[70%] ${isUser ? 'items-end' : 'items-start'}`}>
-        <div className={`rounded-2xl px-4 py-3 ${
-          isUser 
-            ? 'bg-blue-600 text-white rounded-tr-none' 
+        <div className={`rounded-2xl px-4 py-3 ${isUser
+            ? 'bg-blue-600 text-white rounded-tr-none'
             : hasError
-            ? 'bg-red-50 text-red-900 border border-red-200 rounded-tl-none'
-            : 'bg-gray-100 text-gray-900 rounded-tl-none'
-        }`}>
-          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              ? 'bg-red-50 text-red-900 border border-red-200 rounded-tl-none'
+              : 'bg-gray-100 text-gray-900 rounded-tl-none'
+          }`}>
+          <div className={`text-sm prose prose-sm max-w-none ${isUser
+              ? 'prose-invert prose-p:my-1.5 prose-li:my-0.5'
+              : hasError
+                ? 'prose-p:my-1.5 prose-li:my-0.5'
+                : 'prose-p:my-1.5 prose-li:my-0.5 prose-strong:font-semibold prose-strong:text-gray-900 prose-ol:list-decimal prose-ul:list-disc prose-headings:font-semibold prose-headings:text-gray-900 prose-a:text-green-700 prose-a:no-underline hover:prose-a:underline prose-code:bg-gray-200 prose-code:px-1 prose-code:rounded prose-code:text-sm'
+            }`}>
+            <ReactMarkdown
+              components={{
+                p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                strong: ({ node, ...props }) => <strong className="font-semibold" {...props} />,
+                ul: ({ node, ...props }) => <ul className="list-disc list-inside my-2 space-y-0.5 pl-2" {...props} />,
+                ol: ({ node, ...props }) => <ol className="list-decimal list-inside my-2 space-y-0.5 pl-2" {...props} />,
+                li: ({ node, ...props }) => <li className="ml-1" {...props} />,
+                h1: ({ node, ...props }) => <h1 className="text-base font-bold mt-2 mb-1 first:mt-0" {...props} />,
+                h2: ({ node, ...props }) => <h2 className="text-sm font-bold mt-2 mb-1 first:mt-0" {...props} />,
+                h3: ({ node, ...props }) => <h3 className="text-sm font-semibold mt-2 mb-1 first:mt-0" {...props} />,
+                a: ({ node, ...props }) => <a className="text-green-700 underline hover:no-underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                code: ({ node, ...props }) => (
+                  <code className="bg-gray-200/80 px-1 rounded text-xs font-mono" {...props} />
+                ),
+                pre: ({ node, ...props }) => (
+                  <pre className="bg-gray-200/80 p-2 rounded text-xs overflow-x-auto my-2" {...props} />
+                ),
+              }}
+            >
+              {message.content || ''}
+            </ReactMarkdown>
+          </div>
         </div>
-        
+
         {/* Source Citations */}
         {!isUser && message.sources && message.sources.length > 0 && (
           <div className="mt-2 ml-2">
@@ -368,7 +393,7 @@ function MessageBubble({ message }) {
               </svg>
               <span>{showSources ? 'Hide' : 'Show'} Sources ({message.sources.length})</span>
             </button>
-            
+
             {showSources && (
               <div className="mt-2 space-y-1">
                 {message.sources.map((source, idx) => (

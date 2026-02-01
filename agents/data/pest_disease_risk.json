@@ -29,5 +29,43 @@
     "rainfall_mm": 0.0
   },
   "email_sent": false,
-  "last_updated": "2026-02-01"
+  "last_updated": "2026-02-01",
+  "calendar_hazard_alerts": [
+    {
+      "day_index": 37,
+      "flagged_tasks": [
+        {
+          "task": "Apply Anilofos pesticide at 1-2 kg/ha to control weeds.",
+          "hazard_reason": "Pesticide application should be done with protective gear and according to safety guidelines."
+        }
+      ]
+    },
+    {
+      "day_index": 41,
+      "flagged_tasks": [
+        {
+          "task": "Apply recommended fungicides like Chlorothalonil if needed.",
+          "hazard_reason": "Fungicide application should follow label instructions and safety precautions."
+        }
+      ]
+    },
+    {
+      "day_index": 75,
+      "flagged_tasks": [
+        {
+          "task": "Initiate Acephate pesticide application at 1 kg/ha.",
+          "hazard_reason": "Pesticide application should be done with protective gear and according to safety guidelines."
+        }
+      ]
+    },
+    {
+      "day_index": 76,
+      "flagged_tasks": [
+        {
+          "task": "Continue pesticide application if necessary as prescribed.",
+          "hazard_reason": "Pesticide application should follow label instructions and safety precautions."
+        }
+      ]
+    }
+  ]
 }

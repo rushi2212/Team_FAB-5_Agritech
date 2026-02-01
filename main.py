@@ -208,15 +208,34 @@ def get_persistent():
     return _read_json(PERSISTENT_PATH, "persistent.json")
 
 
+def _sanitize_calendar_tasks(calendar_data: dict) -> dict:
+    """Remove any calendar day tasks that suggest hazardous behavior (e.g. burn all)."""
+    try:
+        from agents.pest_disease_agent import filter_hazardous_tasks
+    except ImportError:
+        return calendar_data
+    if not isinstance(calendar_data, dict):
+        return calendar_data
+    out = json.loads(json.dumps(calendar_data))
+    days = out.get("days")
+    if not isinstance(days, list):
+        return out
+    for day in days:
+        if isinstance(day, dict) and "tasks" in day and isinstance(day["tasks"], list):
+            day["tasks"] = filter_hazardous_tasks(day["tasks"])
+    return out
+
+
 @app.get("/calendar", response_class=JSONResponse)
 def get_calendar():
-    """Return calendar.json if present (full or from start_day to end)."""
+    """Return calendar.json if present (full or from start_day to end). Hazardous tasks are filtered out."""
     log.debug("GET /calendar")
     if not CALENDAR_PATH.exists() or CALENDAR_PATH.stat().st_size == 0:
         log.debug("GET /calendar 404")
         raise HTTPException(
             status_code=404, detail="Calendar not found. Run generate-calendar first.")
-    return _read_json(CALENDAR_PATH, "calendar.json")
+    data = _read_json(CALENDAR_PATH, "calendar.json")
+    return _sanitize_calendar_tasks(data)
 
 
 # ---------------------------------------------------------------------------
@@ -335,7 +354,7 @@ def generate_calendar_endpoint(body: GenerateCalendarRequest | None = Body(None)
             with open(CALENDAR_PATH, "r", encoding="utf-8") as f:
                 out = json.load(f)
             log.debug("POST /generate-calendar ok -> calendar.json")
-            return out
+            return _sanitize_calendar_tasks(out)
         log.debug("POST /generate-calendar ok (no file) message=%s", msg)
         return {"message": msg or "Calendar run completed."}
     except FileNotFoundError as e:

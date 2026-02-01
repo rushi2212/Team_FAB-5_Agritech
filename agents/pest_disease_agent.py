@@ -16,6 +16,7 @@ Uses data from:
 """
 import json
 import os
+import re
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -255,6 +256,343 @@ PEST_DISEASE_DB = {
     }
 }
 
+# -----------------------------------------------------------------------------
+# Hazardous content detection and sanitization
+# Ensures the agent never suggests dangerous or harmful practices (e.g. burning
+# crops, unsafe chemicals, ingestion). Used to filter preventive_actions and
+# to detect hazardous content in any user-facing text (e.g. calendar tasks).
+# -----------------------------------------------------------------------------
+HAZARDOUS_PHRASES_BLOCKLIST = [
+    "burn all",
+    "burn crop",
+    "burn field",
+    "burn the",
+    "burn residue",
+    "burn plant",
+    "set fire",
+    "light fire",
+    "ingest",
+    "consume pesticide",
+    "drink ",
+    "eat pesticide",
+    "human consumption of chemical",
+    "apply undiluted",
+    "use without label",
+    "disregard label",
+    "no protective gear",
+    "without protective",
+    "highly toxic without",
+    "banned chemical",
+    "illegal pesticide",
+    "dose above label",
+    "overdose",
+    "excessive dosage",
+    "flush pesticide",
+    "dump chemical",
+]
+
+# Safe fallback when all actions for a risk level would be filtered
+SAFE_FALLBACK_ACTIONS = [
+    "Follow label instructions and government (ICAR/TNAU) guidelines only.",
+    "Consult an agricultural extension officer before applying any control measure.",
+]
+
+
+def is_hazardous(text: str) -> bool:
+    """
+    Detect if the given text suggests hazardous or dangerous behavior.
+    Returns True if the text contains any blocklisted phrase (case-insensitive).
+    Use this to flag or filter recommendations, calendar tasks, or any user-facing content.
+    """
+    if not text or not isinstance(text, str):
+        return False
+    lower = text.strip().lower()
+    if not lower:
+        return False
+    return any(phrase in lower for phrase in HAZARDOUS_PHRASES_BLOCKLIST)
+
+
+def filter_hazardous_recommendations(items: list[str]) -> list[str]:
+    """
+    Remove any recommendation or action that contains hazardous content.
+    Returns only safe items. If all items would be removed, returns SAFE_FALLBACK_ACTIONS
+    so the user always gets at least one safe guideline.
+    """
+    if not items:
+        return list(SAFE_FALLBACK_ACTIONS)
+    safe = [a for a in items if isinstance(a, str) and not is_hazardous(a)]
+    if not safe:
+        return list(SAFE_FALLBACK_ACTIONS)
+    return safe
+
+
+def filter_hazardous_tasks(tasks: list[str]) -> list[str]:
+    """
+    Filter out any task that suggests hazardous or dangerous behavior.
+    Use this when displaying or returning calendar tasks (e.g. from calendar.json)
+    so that unsafe suggestions (e.g. 'Burn all') are never shown to the user.
+    Returns only tasks that pass the hazardous-content check.
+    """
+    if not tasks:
+        return []
+    return [t for t in tasks if isinstance(t, str) and t.strip() and not is_hazardous(t)]
+
+
+def scan_calendar_for_hazardous_tasks(calendar_data: dict[str, Any]) -> list[dict[str, Any]]:
+    """
+    Scan calendar days for tasks that suggest hazardous behavior (blocklist only).
+    Returns a list of { "day_index": int, "flagged_tasks": [ { "task", "hazard_reason" } ] }.
+    Used as fallback when LLM calendar hazard scan is unavailable.
+    """
+    if not calendar_data or not isinstance(calendar_data, dict):
+        return []
+    days = calendar_data.get("days")
+    if not isinstance(days, list):
+        return []
+    alerts = []
+    for day in days:
+        if not isinstance(day, dict):
+            continue
+        tasks = day.get("tasks")
+        if not isinstance(tasks, list):
+            continue
+        flagged = [
+            {"task": t, "hazard_reason": "Flagged by safety filter (unsafe practice)."}
+            for t in tasks
+            if isinstance(t, str) and t.strip() and is_hazardous(t)
+        ]
+        if flagged:
+            day_index = day.get("day_index")
+            alerts.append({
+                "day_index": int(day_index) if day_index is not None else 0,
+                "flagged_tasks": flagged,
+            })
+    return alerts
+
+
+# -----------------------------------------------------------------------------
+# LLM-based calendar hazard detection
+# Sends calendar data to an LLM to flag any hazardous, dangerous, or unsafe
+# tasks (e.g. burning crops, improper chemical use, disregard of safety).
+# -----------------------------------------------------------------------------
+CALENDAR_HAZARD_LLM_MODEL = os.getenv("CALENDAR_HAZARD_LLM_MODEL", "gpt-4o-mini")
+CALENDAR_HAZARD_MAX_DAYS = int(os.getenv("CALENDAR_HAZARD_MAX_DAYS", "200"))  # cap for prompt size
+CALENDAR_HAZARD_MAX_TASKS_PER_DAY = 30
+
+
+def _build_calendar_hazard_prompt(
+    calendar_data: dict[str, Any],
+    crop_name: str = "",
+    location: str = "",
+) -> str:
+    """Build the prompt sent to the LLM to flag hazardous calendar tasks."""
+    days = calendar_data.get("days") or []
+    if not isinstance(days, list):
+        days = []
+    location = location or (calendar_data.get("location") or {})
+    if isinstance(location, dict):
+        loc_parts = [
+            location.get("state"),
+            location.get("city"),
+        ]
+        location = ", ".join(p for p in loc_parts if p) or "Not specified"
+    crop = (calendar_data.get("crop") or {}).get("crop_name") or crop_name or "Not specified"
+    season = (calendar_data.get("crop") or {}).get("season") or ""
+
+    # Limit days and tasks per day to keep prompt within context
+    days_slice = days[:CALENDAR_HAZARD_MAX_DAYS]
+    calendar_text_parts = []
+    for day in days_slice:
+        if not isinstance(day, dict):
+            continue
+        day_index = day.get("day_index", 0)
+        stage_name = day.get("stage_name", "")
+        tasks = day.get("tasks") or []
+        if not isinstance(tasks, list):
+            tasks = []
+        tasks = tasks[:CALENDAR_HAZARD_MAX_TASKS_PER_DAY]
+        task_lines = "\n".join(f"  - {t}" for t in tasks if isinstance(t, str) and t.strip())
+        calendar_text_parts.append(f"Day {day_index} (Stage: {stage_name}):\n{task_lines}")
+    calendar_text = "\n\n".join(calendar_text_parts)
+
+    return f"""You are an agricultural safety expert. Your job is to review a farming calendar and flag any task that suggests hazardous, dangerous, or unsafe practices.
+
+**Context**
+- Crop: {crop}
+- Season: {season}
+- Location: {location}
+
+**Farming calendar (day-by-day tasks)**
+{calendar_text}
+
+**What to flag**
+Flag any task that:
+- Suggests burning crops, fields, or plants (e.g. "burn all", "burn the field") unless it is clearly controlled crop-residue burning per local norms and you are certain it is safe in context.
+- Recommends use of chemicals, pesticides, or fertilizers in an unsafe way (e.g. without protective gear, above label dose, ingestion, improper storage).
+- Could harm humans, livestock, or the environment (e.g. dumping chemicals, using banned substances).
+- Encourages ignoring label instructions or government (ICAR/TNAU) safety guidelines.
+- Is vague in a way that could be interpreted as dangerous (e.g. "apply strong pesticide" without dosage or safety note).
+
+**What NOT to flag**
+- Normal agricultural practices: pruning, weeding, irrigation, soil preparation, harvesting, monitoring, spraying when done as per label.
+- Mentions of "remove and destroy infected plants" (sanitation) or "burn crop residues" when clearly referring to safe residue management.
+- General advisory text that recommends consulting extension officers or following guidelines.
+
+**Output format**
+Reply with ONLY a valid JSON array. No markdown, no explanation outside the JSON.
+Each element must have: "day_index" (number), "flagged_tasks" (array of objects with "task" (exact task text as in calendar) and "hazard_reason" (one short sentence why it is hazardous)).
+Include ONLY days that have at least one hazardous task. If no hazardous tasks are found, output: []
+
+Example format:
+[{{"day_index": 81, "flagged_tasks": [{{"task": "Burn all", "hazard_reason": "Burning entire crop/field is destructive and unsafe; not a recommended practice."}}]}}]
+"""
+
+
+def _call_llm_calendar_hazard(prompt: str) -> str:
+    """Call OpenAI to analyze calendar for hazardous tasks. Returns raw response content."""
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY not set; cannot run LLM calendar hazard scan")
+    try:
+        from openai import OpenAI
+    except ImportError:
+        raise ImportError("openai package required for LLM calendar hazard scan; pip install openai")
+    client = OpenAI(api_key=api_key)
+    response = client.chat.completions.create(
+        model=CALENDAR_HAZARD_LLM_MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an agricultural safety expert. You output only valid JSON when asked to flag hazardous calendar tasks.",
+            },
+            {"role": "user", "content": prompt},
+        ],
+        max_tokens=4096,
+        temperature=0,
+    )
+    if not response.choices:
+        raise ValueError("LLM returned no choices")
+    message = response.choices[0].message
+    content = (getattr(message, "content", None) or "").strip()
+    return content
+
+
+def _parse_llm_hazard_response(content: str) -> list[dict[str, Any]]:
+    """Parse LLM JSON response into list of { day_index, flagged_tasks }."""
+    content = content.strip()
+    # Extract JSON from markdown code block if present
+    json_match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", content)
+    if json_match:
+        content = json_match.group(1).strip()
+    # Try parse
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError:
+        content = re.sub(r",\s*([}\]])", r"\1", content)
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError:
+            try:
+                import json_repair
+                data = json_repair.loads(content)
+            except Exception:
+                return []
+    if not isinstance(data, list):
+        return []
+    result = []
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        day_index = item.get("day_index")
+        flagged_tasks = item.get("flagged_tasks")
+        if day_index is None or not isinstance(flagged_tasks, list):
+            continue
+        normalized = []
+        for ft in flagged_tasks:
+            if not isinstance(ft, dict):
+                continue
+            task = ft.get("task")
+            hazard_reason = ft.get("hazard_reason") or "Flagged as hazardous by safety review."
+            if task is not None and str(task).strip():
+                normalized.append({"task": str(task).strip(), "hazard_reason": str(hazard_reason).strip()})
+        if normalized:
+            result.append({
+                "day_index": int(day_index) if day_index is not None else 0,
+                "flagged_tasks": normalized,
+            })
+    return result
+
+
+def scan_calendar_for_hazardous_tasks_with_llm(
+    calendar_data: dict[str, Any],
+    variable: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    """
+    Send calendar data to the LLM to flag any hazardous or unsafe tasks.
+    Returns list of { day_index, flagged_tasks: [ { task, hazard_reason } ] }.
+    On LLM failure or missing API key, falls back to blocklist-based scan (same shape).
+    """
+    if not calendar_data or not isinstance(calendar_data, dict):
+        return []
+    days = calendar_data.get("days")
+    if not isinstance(days, list) or not days:
+        return []
+
+    crop_name = ""
+    location = ""
+    if isinstance(variable, dict):
+        crop_name = (variable.get("crop") or {}).get("crop_name") or ""
+        loc = variable.get("location") or {}
+        if isinstance(loc, dict):
+            location = ", ".join(p for p in [loc.get("state"), loc.get("city")] if p)
+
+    try:
+        prompt = _build_calendar_hazard_prompt(calendar_data, crop_name=crop_name, location=location)
+        content = _call_llm_calendar_hazard(prompt)
+        alerts = _parse_llm_hazard_response(content)
+        if alerts:
+            print(f"[Pest Risk Agent] LLM flagged {len(alerts)} day(s) with hazardous calendar tasks")
+        return alerts
+    except Exception as e:
+        print(f"[Pest Risk Agent] LLM calendar hazard scan failed: {e}; using blocklist fallback")
+        return scan_calendar_for_hazardous_tasks(calendar_data)
+
+
+def sanitize_risk_output(risk_data: dict[str, Any]) -> dict[str, Any]:
+    """
+    Sanitize all user-facing strings in the risk assessment result so that
+    no hazardous suggestions are ever returned. Modifies preventive_actions,
+    and optionally descriptions/reasons in pest_risks and disease_risks.
+    """
+    out = dict(risk_data)
+    # Always sanitize preventive_actions
+    actions = out.get("preventive_actions")
+    if isinstance(actions, list):
+        out["preventive_actions"] = filter_hazardous_recommendations(actions)
+    elif isinstance(actions, str):
+        out["preventive_actions"] = (
+            filter_hazardous_recommendations([actions]) if not is_hazardous(actions) else SAFE_FALLBACK_ACTIONS
+        )
+    # Sanitize any free text in pest_risks / disease_risks (description, reason)
+    for key in ("pest_risks", "disease_risks"):
+        entries = out.get(key)
+        if not isinstance(entries, list):
+            continue
+        sanitized = []
+        for item in entries:
+            if not isinstance(item, dict):
+                sanitized.append(item)
+                continue
+            copy = dict(item)
+            for field in ("description", "reason"):
+                val = copy.get(field)
+                if isinstance(val, str) and is_hazardous(val):
+                    copy[field] = "See government (ICAR/TNAU) guidelines for safe management."
+            sanitized.append(copy)
+        out[key] = sanitized
+    return out
+
+
 # Preventive actions database
 PREVENTIVE_ACTIONS = {
     "low": [
@@ -402,7 +740,7 @@ def assess_risks(
     # Get crop database or use default
     if crop_lower not in PEST_DISEASE_DB:
         print(f"[Pest Risk Agent] No specific data for {crop_name}, using general assessment")
-        return {
+        raw = {
             "crop_name": crop_name,
             "crop_stage": crop_stage,
             "day_of_cycle": day_of_cycle,
@@ -419,6 +757,7 @@ def assess_risks(
             "email_sent": False,
             "last_updated": date.today().isoformat()
         }
+        return sanitize_risk_output(raw)
     
     crop_db = PEST_DISEASE_DB[crop_lower]
     
@@ -475,7 +814,7 @@ def assess_risks(
     print(f"[Pest Risk Agent] Risk assessment complete: {risk_level.upper()} ({risk_score:.1f}/100)")
     print(f"[Pest Risk Agent] Found {len(pest_risks)} pest risks, {len(disease_risks)} disease risks")
     
-    return {
+    raw = {
         "crop_name": crop_name,
         "crop_stage": crop_stage,
         "day_of_cycle": day_of_cycle,
@@ -492,6 +831,7 @@ def assess_risks(
         "email_sent": False,
         "last_updated": date.today().isoformat()
     }
+    return sanitize_risk_output(raw)
 
 
 def assess_pest_disease_risk(variable_data: dict[str, Any], current_stage: str | None = None) -> dict[str, Any]:
@@ -633,7 +973,7 @@ def run(user_email: str = "") -> dict[str, Any]:
     humidity = climate.get("humidity_percent", 70)
     rainfall = climate.get("rainfall_mm", 0)
     
-    # Assess risks
+    # Assess risks (sanitization is applied inside assess_risks)
     risk_data = assess_risks(
         crop_name=crop_name,
         crop_stage=crop_stage,
@@ -643,7 +983,14 @@ def run(user_email: str = "") -> dict[str, Any]:
         day_of_cycle=day_of_cycle
     )
     
-    # Send email if risk is medium or higher
+    # LLM-based scan of calendar for hazardous tasks; add to assessment so the UI can show "hazardous aspects in calendar"
+    if calendar:
+        calendar_hazard_alerts = scan_calendar_for_hazardous_tasks_with_llm(calendar, variable=variable)
+        if calendar_hazard_alerts:
+            risk_data["calendar_hazard_alerts"] = calendar_hazard_alerts
+            print(f"[Pest Risk Agent] Found {len(calendar_hazard_alerts)} day(s) with hazardous calendar tasks (LLM-flagged)")
+    
+    # Send email if risk is medium or higher (risk_data already sanitized)
     if user_email and risk_data["risk_level"] in ["medium", "high", "critical"]:
         email_sent = send_alert_email(risk_data, user_email)
         risk_data["email_sent"] = email_sent
